@@ -3,7 +3,8 @@
 <!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
 ]>
 <!-- WK: Set category, IPR, docName -->
-<rfc category="info" docName="draft-wkumari-dnsop-multiple-responses" ipr="trust200902">
+<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses"
+     ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
   <?rfc toc="yes" ?>
@@ -21,7 +22,8 @@
   <front>
     <!-- WK: Set long title. -->
 
-    <title abbrev="template">TODO: Template.</title>
+    <title abbrev="DNS Multiple Answers">Returning multiple answers in a DNS
+    response.</title>
 
     <author fullname="Warren Kumari" initials="W." surname="Kumari">
       <organization>Google</organization>
@@ -41,37 +43,251 @@
       </address>
     </author>
 
-    <date day="23" month="October" year="2011" />
+    <author fullname="Zhiwei Yan" initials="Z." surname="Yan">
+      <organization>CNNIC</organization>
+
+      <address>
+        <postal>
+          <street>No.4 South 4th Street, Zhongguancun </street>
+
+          <city>Beijing</city>
+
+          <code>100190</code>
+
+          <country>P. R. China </country>
+        </postal>
+
+        <email>yanzhiwei@cnnic.cn</email>
+      </address>
+    </author>
+
+    <author fullname="Wes Hardaker" initials="W." surname="Hardaker">
+      <organization>Parsons, Inc.</organization>
+
+      <address>
+        <postal>
+          <street>P.O. Box 382</street>
+
+          <city>Davis, CA</city>
+
+          <code>95617</code>
+
+          <country>US</country>
+        </postal>
+
+        <email>ietf@hardakers.net</email>
+      </address>
+    </author>
+
+    <date day="3" month="January" year="2015"/>
 
     <area>template</area>
 
-    <workgroup>template</workgroup>
+    <workgroup>dnsop</workgroup>
 
     <abstract>
-      <t>This document is a template and should be updated :-P.</t>
+      <t>This document reintroduces the ability to provide mulltiple answers
+      in a DNS response.</t>
     </abstract>
   </front>
 
   <middle>
     <section title="Introduction">
-      <t>This document is a template. Here is a reference to an IANA object /
-      non-RFC or draft. (<xref target="IANA.AS_Numbers"></xref>).</t>
+      <t>Often the name being resolved in the DNS provides information about
+      why the name is being resolved, allowing the authorative name server
+      operator to predict what other answers the client will soon query for.
+      By providing multiple answers in the response, the authorative name
+      server operator can ensure that the recursive server that the client is
+      using has all the answers in it cache.</t>
 
-      <t><xref target="I-D.ietf-sidr-iana-objects"></xref> and this is a
-      reference to a draft.</t>
+      <t>For example, the name server operator of Example Widgets, Inc
+      (example.com) knows that the example.com web page at www.example.com
+      contains various resources, including some images (served from
+      images.example.com), some Cascading Style Sheets (served from
+      css.example.com) and some JavaScript (data.example.com). A client
+      attempting to resolve www.example.com is very likely to be a web
+      browser, rendering the page, and so will need to also resolve all of the
+      other names for these other resources. Providing all of these answers in
+      response to a query for www.example.com allows the recursive server to
+      populate its cache and have all of the answers available when the client
+      asks for them. </t>
+
+      <t>Other examples where this technique is useful include SMTP (including
+      the mail server address when serving the MX record), SRV (providing the
+      target information in addition to the SRV response) and TLSA (providing
+      any TLSA records associated with a name).</t>
+
+      <t>This is purely an optimization - by providing all of other, related
+      answers that the client is likely to need along with the answer that
+      they requested, users get a better experience, iterative servers need to
+      perform less queries, authorative servers have to answer fewer queries,
+      etc.</t>
+
+      <t><xref target="I-D.ietf-sidr-iana-objects"/> and this is a reference
+      to a draft.</t>
 
       <section title="Requirements notation">
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
         "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this
         document are to be interpreted as described in <xref
-        target="RFC2119"></xref>.</t>
+        target="RFC2119"/>.</t>
       </section>
     </section>
 
-    <section title="Another section.">
-      <t>Template.</t>
+    <section title="Background">
+      <t>The existing DNS specifications allow for additional information to
+      be included in the "additional" section of the DNS response, but in
+      order to defeat cache poisining attacks most implementations either
+      ignore or don't trust additional information (other than for "glue").
+      For some more background, see <xref target="Ref.Bellovin"/>, <xref
+      target="RFC1034"/>, <xref target="RFC2181"/>.</t>
 
-      <t></t>
+      <t>Not trusting the information in the additional section was necessary
+      because there was no way to authenticate it. If you queried for
+      www.example.com and got back answers for www.invalid.com you couldn't
+      tell if these were actually from invalid.com or if an attacker was
+      trying to get bad information for invalid.com into your cache. In a
+      world of ubiquitious DNSSEC deployment [Ed note: By the time this
+      document is published, there *will* be ubiquitous DNSSEC :-) ] the
+      iterative server can validate the information and trust it. </t>
+
+      <t/>
+    </section>
+
+    <section title="Terminology">
+      <t><list style="hanging">
+          <t hangText="Additional records">Additional records are records that
+          the authorative nameserver has included in the Additional
+          section.</t>
+
+          <t hangText="Primary query">A Primary query (or primary question) is
+          a QNAME that the name server operator would like to return
+          additional answers for.</t>
+
+          <t hangText="Supporting information">Supporting information is the
+          DNSSEC RRSIGs that prove the authenticity of the Additional records.
+          </t>
+        </list></t>
+    </section>
+
+    <section title="Returning multiple answers">
+      <t>The authorative nameserver should include as many of the instructed
+      Additional records and Supporting information as will fit in the
+      resposne packet.</t>
+
+      <t>In order to include Additional records in a response, certain
+      conditions need to be met. [Ed note: Some discussion on each rule is
+      below] </t>
+
+      <t><list style="numbers">
+          <t>Additional records MUST only be included when the primary name is
+          DNSSEC secured.</t>
+
+          <t>Additional records MUST only be served over TCP connections. This
+          is to mitigate Denial of Service reflection attacks.[1]</t>
+
+          <t>Additional records MUST be leaf records at the same node in the
+          DNS tree[2]</t>
+
+          <t>The DNSSEC supporting information must be included. This is the
+          RRSIGs required to validate the Additional record information.</t>
+
+          <t>All of the records MUST be signed with the same DNSSEC keys.</t>
+
+          <t>The authorative namesever SHOULD include as many of the
+          additional records as will fit in the response. Each Additional
+          record MUST have its matching Supporting information. Additional
+          records MUST be inserted in the order specified in the Additional
+          records list.</t>
+
+          <t>Operators SHOULD only include Additional answers that they expect
+          a client to actually need. [3]</t>
+        </list></t>
+
+      <t>[Ed note 1: The above MAY be troll bait. I'm not really sure if this
+      is a good idea or not - moving folk towards TCP is probably a good idea,
+      and this is somewhat of an optional record type. Then again, special
+      handing (TCP only) for a record would be unusual. Additional records
+      could cause responses to become really large, but there are already
+      enough large records that can be used for reflection attacks that we can
+      jsut give up on the whole "keep responses as small as possible" ship.
+      ]</t>
+
+      <t>[Ed note 2: This is poorly worded. I mumbled about bailiwick,
+      subdomains, etc but nothing I could come up with was better. Also, is
+      this rule actually needed? I *think* it would be bad for .com servers to
+      be able to include Additional records for www.foo.bar.baz.example.com,
+      but perhaps &lt;handwave&gt;public-suffix-list?! This rule also makes it
+      easier to decide what all DNSSEC information is required.]</t>
+
+      <t>[Ed note 3: This is not enforcable. ] </t>
+    </section>
+
+    <section title="Additional records pseudo-RR">
+      <t>To allow the authorative nameserver operator to configure what
+      additional records to serve when it receives a query to a label, we
+      introduce the Additional pseudo Resource Record (RR). This is a
+      pseudo-record as it provides instruction to the authorative nameserver,
+      and does not appear on the wire. [Ed note: I had originally considered a
+      comment, or some sort of format where we listed additional records under
+      the primary one, but we a: wanted it to survive zone transfers, and b:
+      not trip up zone file parsers. ]</t>
+
+      <t>The format of the Additional pseudo-RR is:</t>
+
+      <t>label ADD "label,type,ttl; label,type,ttl; label,type,ttl; ..."</t>
+
+      <t>For example, if the operator of example.com would like to also return
+      A record answers for images.example.com, css.example.com and both an A
+      and AAAA for data.example.com when queried for www.example.com he would
+      enter:</t>
+
+      <t>www ADD "images,A,600; css,A,1800; data,A,600; data,AAA,600;"</t>
+
+      <t>The entries in the ADD list are ordered. An authorative nameserver
+      MUST attempt to insert the records in the order listed when determining
+      how many records it can fit in the resposne packet.</t>
+    </section>
+
+    <section title="Signalling support">
+      <t>Iterative nameservers that support Additional records signal this by
+      setting the Z bit (bit 25 of the DNS header). </t>
+
+      <t> <xref target="RFC5395"/> Section 2.1 says:</t>
+
+      <t><figure>
+          <artwork><![CDATA[There have been ancient DNS implementations for which the Z bit
+being on in a query meant that only a response from the primary
+server for a zone is acceptable. It is believed that current
+DNS implementations ignore this bit. 
+
+Assigning a meaning to the Z bit requires an IETF Standards Action.]]></artwork>
+        </figure></t>
+
+      <t>[ Ed note: Hey, was worth a try. I'm fine with an EDNS0 bit instead ]
+      </t>
+    </section>
+
+    <section title="Use of Additional information">
+      <t>When receiving Additional information, an iterative server follows
+      certain rules:</t>
+
+      <t><list style="numbers">
+          <t>Additional records MUST be validated before being used.</t>
+
+          <t>Additional records SHOULD be annotated in the cache as having
+          been received as Additional records.</t>
+
+          <t>Additional records SHOULD have lower priority in the cache than
+          answers received because they were requested. This is to help evict
+          Additional records from the cache first, and help stop cache filling
+          attacks. </t>
+
+          <t>Iterative servers MAY choose to ignore Additional records for any
+          reason, including CPU or cache space concerns, phase of the moon,
+          etc. It may choose to only accept all, some or none of the
+          Additional records.</t>
+        </list></t>
     </section>
 
     <section title="IANA Considerations">
@@ -80,7 +296,20 @@
     </section>
 
     <section anchor="security" title="Security Considerations">
-       <t>TODO: Fill this out!</t>
+      <t>Additional records will make DNS responses even larger than they are
+      currently, leading to more large records that can be used for DNS
+      reflection attacks. We mitigate this by only serving these over TCP.</t>
+
+      <t>A malicious authorative server could include a large number of
+      Additional records (and associated DNSSEC information) and attempt to
+      DoS the recursive by making it do lots of DNSSEC validation. I don't
+      view this as a very serious threat (CPU for validation is cheap compared
+      to bandwith), but we mitigate this by allowing the iterative to ignore
+      Additional records whenever it wants.</t>
+
+      <t>By requiring the ALL of the Additional records are signed, and all
+      necessary DNSSEC information for validation be included we avoid cache
+      poisoning (I hope :-))</t>
     </section>
 
     <section title="Acknowledgements">
@@ -90,19 +319,27 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include='reference.RFC.2119'?>
+      <?rfc include='reference.RFC.2119'
+?>
 
-      <reference anchor="IANA.AS_Numbers"
-                 target="http://www.iana.org/assignments/as-numbers">
+      <?rfc include='reference.RFC.2181'?>
+
+      <?rfc include='reference.RFC.1034'?>
+
+      <?rfc include='reference.RFC.5395'?>
+
+      <reference anchor="Ref.Bellovin"
+                 target="https://www.cs.columbia.edu/~smb/papers/dnshack.pdf">
         <front>
-          <title abbrev="Autonomous System (AS) Numbers">Autonomous System
-          (AS) Numbers</title>
+          <title abbrev="">Using the Domain Name System for System
+          Break-Ins</title>
 
-          <author>
-            <organization>IANA</organization>
+          <author fullname="Steven M. Bellovin" initials="S."
+                  surname="Bellovin">
+            <organization/>
           </author>
 
-          <date />
+          <date year="1995"/>
         </front>
       </reference>
     </references>
