@@ -7,10 +7,10 @@
 dnsop                                                          W. Kumari
 Internet-Draft                                                    Google
 Intended status: Standards Track                                  Z. Yan
-Expires: July 7, 2015                                              CNNIC
+Expires: July 15, 2015                                             CNNIC
                                                              W. Hardaker
                                                            Parsons, Inc.
-                                                         January 3, 2015
+                                                        January 11, 2015
 
 
              Returning multiple answers in a DNS response.
@@ -18,7 +18,7 @@ Expires: July 7, 2015                                              CNNIC
 
 Abstract
 
-   This document reintroduces the ability to provide mulltiple answers
+   This document (re)introduces the ability to provide multiple answers
    in a DNS response.
 
 Status of This Memo
@@ -36,7 +36,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 7, 2015.
+   This Internet-Draft will expire on July 15, 2015.
 
 Copyright Notice
 
@@ -55,7 +55,7 @@ Copyright Notice
 
 
 
-Kumari, et al.            Expires July 7, 2015                  [Page 1]
+Kumari, et al.            Expires July 15, 2015                 [Page 1]
 
 Internet-Draft            DNS Multiple Answers              January 2015
 
@@ -67,14 +67,14 @@ Table of Contents
    2.  Background  . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
    4.  Returning multiple answers  . . . . . . . . . . . . . . . . .   3
-   5.  Additional records pseudo-RR  . . . . . . . . . . . . . . . .   5
+   5.  Additional records pseudo-RR  . . . . . . . . . . . . . . . .   4
    6.  Signalling support  . . . . . . . . . . . . . . . . . . . . .   5
-   7.  Use of Additional information . . . . . . . . . . . . . . . .   5
+   7.  Use of Additional information . . . . . . . . . . . . . . . .   6
    8.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
    9.  Security Considerations . . . . . . . . . . . . . . . . . . .   6
-   10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   6
-   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .   6
-     11.1.  Normative References . . . . . . . . . . . . . . . . . .   6
+   10. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   7
+   11. References  . . . . . . . . . . . . . . . . . . . . . . . . .   7
+     11.1.  Normative References . . . . . . . . . . . . . . . . . .   7
      11.2.  Informative References . . . . . . . . . . . . . . . . .   7
    Appendix A.  Changes / Author Notes.  . . . . . . . . . . . . . .   7
    Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   7
@@ -82,11 +82,11 @@ Table of Contents
 1.  Introduction
 
    Often the name being resolved in the DNS provides information about
-   why the name is being resolved, allowing the authorative name server
-   operator to predict what other answers the client will soon query
-   for.  By providing multiple answers in the response, the authorative
-   name server operator can ensure that the recursive server that the
-   client is using has all the answers in it cache.
+   why the name is being resolved, allowing the authoritative name
+   server operator to predict what other answers the client will soon
+   query for.  By providing multiple answers in the response, the
+   authoritative name server operator can ensure that the recursive
+   server that the client is using has all the answers in its cache.
 
    For example, the name server operator of Example Widgets, Inc
    (example.com) knows that the example.com web page at www.example.com
@@ -111,15 +111,13 @@ Table of Contents
 
 
 
-Kumari, et al.            Expires July 7, 2015                  [Page 2]
+Kumari, et al.            Expires July 15, 2015                 [Page 2]
 
 Internet-Draft            DNS Multiple Answers              January 2015
 
 
-   to perform less queries, authorative servers have to answer fewer
+   to perform less queries, authoritative servers have to answer fewer
    queries, etc.
-
-   [I-D.ietf-sidr-iana-objects] and this is a reference to a draft.
 
 1.1.  Requirements notation
 
@@ -131,7 +129,7 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
    The existing DNS specifications allow for additional information to
    be included in the "additional" section of the DNS response, but in
-   order to defeat cache poisining attacks most implementations either
+   order to defeat cache poisoning attacks most implementations either
    ignore or don't trust additional information (other than for "glue").
    For some more background, see [Ref.Bellovin], [RFC1034], [RFC2181].
 
@@ -140,14 +138,14 @@ Internet-Draft            DNS Multiple Answers              January 2015
    www.example.com and got back answers for www.invalid.com you couldn't
    tell if these were actually from invalid.com or if an attacker was
    trying to get bad information for invalid.com into your cache.  In a
-   world of ubiquitious DNSSEC deployment [Ed note: By the time this
+   world of ubiquitous DNSSEC deployment [Ed note: By the time this
    document is published, there *will* be ubiquitous DNSSEC :-) ] the
    iterative server can validate the information and trust it.
 
 3.  Terminology
 
    Additional records  Additional records are records that the
-      authorative nameserver has included in the Additional section.
+      authoritative nameserver has included in the Additional section.
 
    Primary query  A Primary query (or primary question) is a QNAME that
       the name server operator would like to return additional answers
@@ -158,23 +156,21 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
 4.  Returning multiple answers
 
-   The authorative nameserver should include as many of the instructed
+   The authoritative nameserver should include as many of the instructed
    Additional records and Supporting information as will fit in the
-   resposne packet.
-
-
-
-
-
-
-Kumari, et al.            Expires July 7, 2015                  [Page 3]
-
-Internet-Draft            DNS Multiple Answers              January 2015
-
+   response packet.
 
    In order to include Additional records in a response, certain
    conditions need to be met.  [Ed note: Some discussion on each rule is
    below]
+
+
+
+
+Kumari, et al.            Expires July 15, 2015                 [Page 3]
+
+Internet-Draft            DNS Multiple Answers              January 2015
+
 
    1.  Additional records MUST only be included when the primary name is
        DNSSEC secured.
@@ -190,7 +186,7 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
    5.  All of the records MUST be signed with the same DNSSEC keys.
 
-   6.  The authorative namesever SHOULD include as many of the
+   6.  The authoritative nameserver SHOULD include as many of the
        additional records as will fit in the response.  Each Additional
        record MUST have its matching Supporting information.  Additional
        records MUST be inserted in the order specified in the Additional
@@ -205,7 +201,7 @@ Internet-Draft            DNS Multiple Answers              January 2015
    special handing (TCP only) for a record would be unusual.  Additional
    records could cause responses to become really large, but there are
    already enough large records that can be used for reflection attacks
-   that we can jsut give up on the whole "keep responses as small as
+   that we can just give up on the whole "keep responses as small as
    possible" ship.  ]
 
    [Ed note 2: This is poorly worded.  I mumbled about bailiwick,
@@ -216,24 +212,22 @@ Internet-Draft            DNS Multiple Answers              January 2015
    list?! This rule also makes it easier to decide what all DNSSEC
    information is required.]
 
-   [Ed note 3: This is not enforcable. ]
+   [Ed note 3: This is not enforceable. ]
+
+5.  Additional records pseudo-RR
+
+   To allow the authoritative nameserver operator to configure what
+   additional records to serve when it receives a query to a label, we
+   introduce the Additional pseudo Resource Record (RR).  This is a
+   pseudo-record as it provides instruction to the authoritative
 
 
 
-
-
-
-Kumari, et al.            Expires July 7, 2015                  [Page 4]
+Kumari, et al.            Expires July 15, 2015                 [Page 4]
 
 Internet-Draft            DNS Multiple Answers              January 2015
 
 
-5.  Additional records pseudo-RR
-
-   To allow the authorative nameserver operator to configure what
-   additional records to serve when it receives a query to a label, we
-   introduce the Additional pseudo Resource Record (RR).  This is a
-   pseudo-record as it provides instruction to the authorative
    nameserver, and does not appear on the wire.  [Ed note: I had
    originally considered a comment, or some sort of format where we
    listed additional records under the primary one, but we a: wanted it
@@ -241,18 +235,32 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
    The format of the Additional pseudo-RR is:
 
-   label ADD "label,type,ttl; label,type,ttl; label,type,ttl; ..."
+   label ADD "label,typel; label,type; label,type; ..."
 
    For example, if the operator of example.com would like to also return
    A record answers for images.example.com, css.example.com and both an
    A and AAAA for data.example.com when queried for www.example.com he
    would enter:
 
-   www ADD "images,A,600; css,A,1800; data,A,600; data,AAA,600;"
+   www ADD "images,A; css,A; data,A; data,AAA;"
 
-   The entries in the ADD list are ordered.  An authorative nameserver
-   MUST attempt to insert the records in the order listed when
-   determining how many records it can fit in the resposne packet.
+   The entries in the ADD list are ordered.  An authoritative nameserver
+   MUST attempt to insert the records in the order listed when filling
+   the response packet.  This is to allow the operator to express a
+   preference in case all the records to not fit.  The TTL of the
+   records added to the Additional section are the same as if queried
+   directly.
+
+   In some cases the operator might not really know what all additional
+   records clients need.  For example, the owner of www.example.com may
+   have outsourced his DNS operations to a third party.  The DNS
+   operator may be able to mine their query logs, and see that, in a
+   large majority of cases, a recursive server asks for foo.example.com
+   and then very soon after asks for bar.example.com, and so may decide
+   to optimize this by opportunistically returning bar when queried for
+   foo.  This functionality could also be included in the authoritative
+   name server software itself, but discussions of these re outside the
+   scope of this document.
 
 6.  Signalling support
 
@@ -268,21 +276,21 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
    Assigning a meaning to the Z bit requires an IETF Standards Action.
 
-   [ Ed note: Hey, was worth a try.  I'm fine with an EDNS0 bit instead
-   ]
+
+
+
+Kumari, et al.            Expires July 15, 2015                 [Page 5]
+
+Internet-Draft            DNS Multiple Answers              January 2015
+
+
+   [ Ed note: Hey, was worth a try :-) I'm fine with an EDNS0 bit
+   instead... ]
 
 7.  Use of Additional information
 
    When receiving Additional information, an iterative server follows
    certain rules:
-
-
-
-
-Kumari, et al.            Expires July 7, 2015                  [Page 5]
-
-Internet-Draft            DNS Multiple Answers              January 2015
-
 
    1.  Additional records MUST be validated before being used.
 
@@ -320,6 +328,18 @@ Internet-Draft            DNS Multiple Answers              January 2015
    necessary DNSSEC information for validation be included we avoid
    cache poisoning (I hope :-))
 
+
+
+
+
+
+
+
+Kumari, et al.            Expires July 15, 2015                 [Page 6]
+
+Internet-Draft            DNS Multiple Answers              January 2015
+
+
 10.  Acknowledgements
 
    The authors wish to thank some folk.
@@ -330,15 +350,6 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
    [RFC1034]  Mockapetris, P., "Domain names - concepts and facilities",
               STD 13, RFC 1034, November 1987.
-
-
-
-
-
-Kumari, et al.            Expires July 7, 2015                  [Page 6]
-
-Internet-Draft            DNS Multiple Answers              January 2015
-
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119, March 1997.
@@ -371,6 +382,20 @@ Appendix A.  Changes / Author Notes.
 
 Authors' Addresses
 
+
+
+
+
+
+
+
+
+
+Kumari, et al.            Expires July 15, 2015                 [Page 7]
+
+Internet-Draft            DNS Multiple Answers              January 2015
+
+
    Warren Kumari
    Google
    1600 Amphitheatre Parkway
@@ -387,13 +412,6 @@ Authors' Addresses
    P. R. China
 
    Email: yanzhiwei@cnnic.cn
-
-
-
-
-Kumari, et al.            Expires July 7, 2015                  [Page 7]
-
-Internet-Draft            DNS Multiple Answers              January 2015
 
 
    Wes Hardaker
@@ -429,23 +447,5 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Kumari, et al.            Expires July 7, 2015                  [Page 8]
+Kumari, et al.            Expires July 15, 2015                 [Page 8]
 ```

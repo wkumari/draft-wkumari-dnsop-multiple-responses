@@ -48,13 +48,13 @@
 
       <address>
         <postal>
-          <street>No.4 South 4th Street, Zhongguancun </street>
+          <street>No.4 South 4th Street, Zhongguancun</street>
 
           <city>Beijing</city>
 
           <code>100190</code>
 
-          <country>P. R. China </country>
+          <country>P. R. China</country>
         </postal>
 
         <email>yanzhiwei@cnnic.cn</email>
@@ -79,14 +79,14 @@
       </address>
     </author>
 
-    <date day="3" month="January" year="2015"/>
+    <date day="11" month="January" year="2015"/>
 
     <area>template</area>
 
     <workgroup>dnsop</workgroup>
 
     <abstract>
-      <t>This document reintroduces the ability to provide mulltiple answers
+      <t>This document (re)introduces the ability to provide multiple answers
       in a DNS response.</t>
     </abstract>
   </front>
@@ -94,11 +94,11 @@
   <middle>
     <section title="Introduction">
       <t>Often the name being resolved in the DNS provides information about
-      why the name is being resolved, allowing the authorative name server
+      why the name is being resolved, allowing the authoritative name server
       operator to predict what other answers the client will soon query for.
-      By providing multiple answers in the response, the authorative name
+      By providing multiple answers in the response, the authoritative name
       server operator can ensure that the recursive server that the client is
-      using has all the answers in it cache.</t>
+      using has all the answers in its cache.</t>
 
       <t>For example, the name server operator of Example Widgets, Inc
       (example.com) knows that the example.com web page at www.example.com
@@ -110,7 +110,7 @@
       other names for these other resources. Providing all of these answers in
       response to a query for www.example.com allows the recursive server to
       populate its cache and have all of the answers available when the client
-      asks for them. </t>
+      asks for them.</t>
 
       <t>Other examples where this technique is useful include SMTP (including
       the mail server address when serving the MX record), SRV (providing the
@@ -120,11 +120,10 @@
       <t>This is purely an optimization - by providing all of other, related
       answers that the client is likely to need along with the answer that
       they requested, users get a better experience, iterative servers need to
-      perform less queries, authorative servers have to answer fewer queries,
-      etc.</t>
+      perform less queries, authoritative servers have to answer fewer
+      queries, etc.</t>
 
-      <t><xref target="I-D.ietf-sidr-iana-objects"/> and this is a reference
-      to a draft.</t>
+      <t/>
 
       <section title="Requirements notation">
         <t>The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
@@ -137,7 +136,7 @@
     <section title="Background">
       <t>The existing DNS specifications allow for additional information to
       be included in the "additional" section of the DNS response, but in
-      order to defeat cache poisining attacks most implementations either
+      order to defeat cache poisoning attacks most implementations either
       ignore or don't trust additional information (other than for "glue").
       For some more background, see <xref target="Ref.Bellovin"/>, <xref
       target="RFC1034"/>, <xref target="RFC2181"/>.</t>
@@ -147,9 +146,9 @@
       www.example.com and got back answers for www.invalid.com you couldn't
       tell if these were actually from invalid.com or if an attacker was
       trying to get bad information for invalid.com into your cache. In a
-      world of ubiquitious DNSSEC deployment [Ed note: By the time this
+      world of ubiquitous DNSSEC deployment [Ed note: By the time this
       document is published, there *will* be ubiquitous DNSSEC :-) ] the
-      iterative server can validate the information and trust it. </t>
+      iterative server can validate the information and trust it.</t>
 
       <t/>
     </section>
@@ -157,7 +156,7 @@
     <section title="Terminology">
       <t><list style="hanging">
           <t hangText="Additional records">Additional records are records that
-          the authorative nameserver has included in the Additional
+          the authoritative nameserver has included in the Additional
           section.</t>
 
           <t hangText="Primary query">A Primary query (or primary question) is
@@ -165,19 +164,19 @@
           additional answers for.</t>
 
           <t hangText="Supporting information">Supporting information is the
-          DNSSEC RRSIGs that prove the authenticity of the Additional records.
-          </t>
+          DNSSEC RRSIGs that prove the authenticity of the Additional
+          records.</t>
         </list></t>
     </section>
 
     <section title="Returning multiple answers">
-      <t>The authorative nameserver should include as many of the instructed
+      <t>The authoritative nameserver should include as many of the instructed
       Additional records and Supporting information as will fit in the
-      resposne packet.</t>
+      response packet.</t>
 
       <t>In order to include Additional records in a response, certain
       conditions need to be met. [Ed note: Some discussion on each rule is
-      below] </t>
+      below]</t>
 
       <t><list style="numbers">
           <t>Additional records MUST only be included when the primary name is
@@ -194,7 +193,7 @@
 
           <t>All of the records MUST be signed with the same DNSSEC keys.</t>
 
-          <t>The authorative namesever SHOULD include as many of the
+          <t>The authoritative nameserver SHOULD include as many of the
           additional records as will fit in the response. Each Additional
           record MUST have its matching Supporting information. Additional
           records MUST be inserted in the order specified in the Additional
@@ -210,7 +209,7 @@
       handing (TCP only) for a record would be unusual. Additional records
       could cause responses to become really large, but there are already
       enough large records that can be used for reflection attacks that we can
-      jsut give up on the whole "keep responses as small as possible" ship.
+      just give up on the whole "keep responses as small as possible" ship.
       ]</t>
 
       <t>[Ed note 2: This is poorly worded. I mumbled about bailiwick,
@@ -220,40 +219,52 @@
       but perhaps &lt;handwave&gt;public-suffix-list?! This rule also makes it
       easier to decide what all DNSSEC information is required.]</t>
 
-      <t>[Ed note 3: This is not enforcable. ] </t>
+      <t>[Ed note 3: This is not enforceable. ]</t>
     </section>
 
     <section title="Additional records pseudo-RR">
-      <t>To allow the authorative nameserver operator to configure what
+      <t>To allow the authoritative nameserver operator to configure what
       additional records to serve when it receives a query to a label, we
       introduce the Additional pseudo Resource Record (RR). This is a
-      pseudo-record as it provides instruction to the authorative nameserver,
-      and does not appear on the wire. [Ed note: I had originally considered a
-      comment, or some sort of format where we listed additional records under
-      the primary one, but we a: wanted it to survive zone transfers, and b:
-      not trip up zone file parsers. ]</t>
+      pseudo-record as it provides instruction to the authoritative
+      nameserver, and does not appear on the wire. [Ed note: I had originally
+      considered a comment, or some sort of format where we listed additional
+      records under the primary one, but we a: wanted it to survive zone
+      transfers, and b: not trip up zone file parsers. ]</t>
 
       <t>The format of the Additional pseudo-RR is:</t>
 
-      <t>label ADD "label,type,ttl; label,type,ttl; label,type,ttl; ..."</t>
+      <t>label ADD "label,typel; label,type; label,type; ..."</t>
 
       <t>For example, if the operator of example.com would like to also return
       A record answers for images.example.com, css.example.com and both an A
       and AAAA for data.example.com when queried for www.example.com he would
       enter:</t>
 
-      <t>www ADD "images,A,600; css,A,1800; data,A,600; data,AAA,600;"</t>
+      <t>www ADD "images,A; css,A; data,A; data,AAA;"</t>
 
-      <t>The entries in the ADD list are ordered. An authorative nameserver
-      MUST attempt to insert the records in the order listed when determining
-      how many records it can fit in the resposne packet.</t>
+      <t>The entries in the ADD list are ordered. An authoritative nameserver
+      MUST attempt to insert the records in the order listed when filling the
+      response packet. This is to allow the operator to express a preference
+      in case all the records to not fit. The TTL of the records added to the
+      Additional section are the same as if queried directly.</t>
+
+      <t>In some cases the operator might not really know what all additional
+      records clients need. For example, the owner of www.example.com may have
+      outsourced his DNS operations to a third party. The DNS operator may be
+      able to mine their query logs, and see that, in a large majority of
+      cases, a recursive server asks for foo.example.com and then very soon
+      after asks for bar.example.com, and so may decide to optimize this by
+      opportunistically returning bar when queried for foo. This functionality
+      could also be included in the authoritative name server software itself,
+      but discussions of these re outside the scope of this document.</t>
     </section>
 
     <section title="Signalling support">
       <t>Iterative nameservers that support Additional records signal this by
-      setting the Z bit (bit 25 of the DNS header). </t>
+      setting the Z bit (bit 25 of the DNS header).</t>
 
-      <t> <xref target="RFC5395"/> Section 2.1 says:</t>
+      <t><xref target="RFC5395"/> Section 2.1 says:</t>
 
       <t><figure>
           <artwork><![CDATA[There have been ancient DNS implementations for which the Z bit
@@ -264,8 +275,8 @@ DNS implementations ignore this bit.
 Assigning a meaning to the Z bit requires an IETF Standards Action.]]></artwork>
         </figure></t>
 
-      <t>[ Ed note: Hey, was worth a try. I'm fine with an EDNS0 bit instead ]
-      </t>
+      <t>[ Ed note: Hey, was worth a try :-) I'm fine with an EDNS0 bit
+      instead... ]</t>
     </section>
 
     <section title="Use of Additional information">
@@ -281,7 +292,7 @@ Assigning a meaning to the Z bit requires an IETF Standards Action.]]></artwork>
           <t>Additional records SHOULD have lower priority in the cache than
           answers received because they were requested. This is to help evict
           Additional records from the cache first, and help stop cache filling
-          attacks. </t>
+          attacks.</t>
 
           <t>Iterative servers MAY choose to ignore Additional records for any
           reason, including CPU or cache space concerns, phase of the moon,
