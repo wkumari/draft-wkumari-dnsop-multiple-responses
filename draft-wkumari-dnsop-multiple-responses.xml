@@ -3,7 +3,7 @@
 <!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
 ]>
 <!-- WK: Set category, IPR, docName -->
-<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-00"
+<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-00.1"
      ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -22,8 +22,8 @@
   <front>
     <!-- WK: Set long title. -->
 
-    <title abbrev="DNS Multiple Answers">Returning multiple answers in a DNS
-    response.</title>
+    <title abbrev="DNS Multiple Answers">Returning multiple answers in DNS
+    responses.</title>
 
     <author fullname="Warren Kumari" initials="W." surname="Kumari">
       <organization>Google</organization>
@@ -79,7 +79,7 @@
       </address>
     </author>
 
-    <date day="11" month="January" year="2015"/>
+    <date day="25" month="June" year="2015"/>
 
     <area>template</area>
 
@@ -182,8 +182,9 @@
           <t>Additional records MUST only be included when the primary name is
           DNSSEC secured.</t>
 
-          <t>Additional records MUST only be served over TCP connections. This
-          is to mitigate Denial of Service reflection attacks.[1]</t>
+          <t>Additional records MUST only be served over TCP connections, or
+          when DNS Cookies [ToDo: Ref] are in use. This is to mitigate Denial
+          of Service reflection attacks.[1]</t>
 
           <t>Additional records MUST be leaf records at the same node in the
           DNS tree[2]</t>
@@ -311,11 +312,11 @@ Assigning a meaning to the Z bit requires an IETF Standards Action.]]></artwork>
       currently, leading to more large records that can be used for DNS
       reflection attacks. We mitigate this by only serving these over TCP.</t>
 
-      <t>A malicious authorative server could include a large number of
+      <t>A malicious authoritative server could include a large number of
       Additional records (and associated DNSSEC information) and attempt to
       DoS the recursive by making it do lots of DNSSEC validation. I don't
       view this as a very serious threat (CPU for validation is cheap compared
-      to bandwith), but we mitigate this by allowing the iterative to ignore
+      to bandwidth), but we mitigate this by allowing the iterative to ignore
       Additional records whenever it wants.</t>
 
       <t>By requiring the ALL of the Additional records are signed, and all

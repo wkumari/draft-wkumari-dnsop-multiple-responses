@@ -7,14 +7,14 @@
 dnsop                                                          W. Kumari
 Internet-Draft                                                    Google
 Intended status: Standards Track                                  Z. Yan
-Expires: July 15, 2015                                             CNNIC
+Expires: December 27, 2015                                         CNNIC
                                                              W. Hardaker
                                                            Parsons, Inc.
-                                                        January 11, 2015
+                                                           June 25, 2015
 
 
-             Returning multiple answers in a DNS response.
-               draft-wkumari-dnsop-multiple-responses-00
+              Returning multiple answers in DNS responses.
+              draft-wkumari-dnsop-multiple-responses-00.1
 
 Abstract
 
@@ -36,7 +36,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on July 15, 2015.
+   This Internet-Draft will expire on December 27, 2015.
 
 Copyright Notice
 
@@ -55,9 +55,9 @@ Copyright Notice
 
 
 
-Kumari, et al.            Expires July 15, 2015                 [Page 1]
+Kumari, et al.          Expires December 27, 2015               [Page 1]
 
-Internet-Draft            DNS Multiple Answers              January 2015
+Internet-Draft            DNS Multiple Answers                 June 2015
 
 
 Table of Contents
@@ -111,9 +111,9 @@ Table of Contents
 
 
 
-Kumari, et al.            Expires July 15, 2015                 [Page 2]
+Kumari, et al.          Expires December 27, 2015               [Page 2]
 
-Internet-Draft            DNS Multiple Answers              January 2015
+Internet-Draft            DNS Multiple Answers                 June 2015
 
 
    to perform less queries, authoritative servers have to answer fewer
@@ -167,16 +167,17 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
 
 
-Kumari, et al.            Expires July 15, 2015                 [Page 3]
+Kumari, et al.          Expires December 27, 2015               [Page 3]
 
-Internet-Draft            DNS Multiple Answers              January 2015
+Internet-Draft            DNS Multiple Answers                 June 2015
 
 
    1.  Additional records MUST only be included when the primary name is
        DNSSEC secured.
 
-   2.  Additional records MUST only be served over TCP connections.
-       This is to mitigate Denial of Service reflection attacks.[1]
+   2.  Additional records MUST only be served over TCP connections, or
+       when DNS Cookies [ToDo: Ref] are in use.  This is to mitigate
+       Denial of Service reflection attacks.[1]
 
    3.  Additional records MUST be leaf records at the same node in the
        DNS tree[2]
@@ -219,15 +220,15 @@ Internet-Draft            DNS Multiple Answers              January 2015
    To allow the authoritative nameserver operator to configure what
    additional records to serve when it receives a query to a label, we
    introduce the Additional pseudo Resource Record (RR).  This is a
-   pseudo-record as it provides instruction to the authoritative
 
 
 
-Kumari, et al.            Expires July 15, 2015                 [Page 4]
+Kumari, et al.          Expires December 27, 2015               [Page 4]
 
-Internet-Draft            DNS Multiple Answers              January 2015
+Internet-Draft            DNS Multiple Answers                 June 2015
 
 
+   pseudo-record as it provides instruction to the authoritative
    nameserver, and does not appear on the wire.  [Ed note: I had
    originally considered a comment, or some sort of format where we
    listed additional records under the primary one, but we a: wanted it
@@ -278,10 +279,9 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
 
 
-
-Kumari, et al.            Expires July 15, 2015                 [Page 5]
+Kumari, et al.          Expires December 27, 2015               [Page 5]
 
-Internet-Draft            DNS Multiple Answers              January 2015
+Internet-Draft            DNS Multiple Answers                 June 2015
 
 
    [ Ed note: Hey, was worth a try :-) I'm fine with an EDNS0 bit
@@ -317,12 +317,12 @@ Internet-Draft            DNS Multiple Answers              January 2015
    currently, leading to more large records that can be used for DNS
    reflection attacks.  We mitigate this by only serving these over TCP.
 
-   A malicious authorative server could include a large number of
+   A malicious authoritative server could include a large number of
    Additional records (and associated DNSSEC information) and attempt to
    DoS the recursive by making it do lots of DNSSEC validation.  I don't
    view this as a very serious threat (CPU for validation is cheap
-   compared to bandwith), but we mitigate this by allowing the iterative
-   to ignore Additional records whenever it wants.
+   compared to bandwidth), but we mitigate this by allowing the
+   iterative to ignore Additional records whenever it wants.
 
    By requiring the ALL of the Additional records are signed, and all
    necessary DNSSEC information for validation be included we avoid
@@ -335,9 +335,9 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
 
 
-Kumari, et al.            Expires July 15, 2015                 [Page 6]
+Kumari, et al.          Expires December 27, 2015               [Page 6]
 
-Internet-Draft            DNS Multiple Answers              January 2015
+Internet-Draft            DNS Multiple Answers                 June 2015
 
 
 10.  Acknowledgements
@@ -362,8 +362,8 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
    [Ref.Bellovin]
               Bellovin, S., "Using the Domain Name System for System
-              Break-Ins", 1995, <https://www.cs.columbia.edu/~smb/
-              papers/dnshack.pdf>.
+              Break-Ins", 1995,
+              <https://www.cs.columbia.edu/~smb/papers/dnshack.pdf>.
 
 11.2.  Informative References
 
@@ -391,9 +391,9 @@ Authors' Addresses
 
 
 
-Kumari, et al.            Expires July 15, 2015                 [Page 7]
+Kumari, et al.          Expires December 27, 2015               [Page 7]
 
-Internet-Draft            DNS Multiple Answers              January 2015
+Internet-Draft            DNS Multiple Answers                 June 2015
 
 
    Warren Kumari
@@ -447,5 +447,5 @@ Internet-Draft            DNS Multiple Answers              January 2015
 
 
 
-Kumari, et al.            Expires July 15, 2015                 [Page 8]
+Kumari, et al.          Expires December 27, 2015               [Page 8]
 ```
