@@ -232,40 +232,53 @@
     <section title="Additional records pseudo-RR">
       <t>To allow the authoritative nameserver operator to configure the
       name server with the additional records to serve when it receives a
-      query to a label, we introduce the Additional pseudo Resource
-      Record (RR). This is a pseudo-record as it provides instruction
-      to the authoritative nameserver, and does not appear on the
-      wire. [Ed note: I had originally considered a comment, or some
-      sort of format where we listed additional records under the
-      primary one, but we a: wanted it to survive zone transfers, and
-      b: not trip up zone file parsers. ]</t>
+      query to a label, we introduce the Additional Resource
+      Record (RR).</t>
 
-      <t>The format of the Additional pseudo-RR is:</t>
+      <section title="File Format">
+	      <t>The format of the Additional RR is:</t>
 
-      <t>label ADD "label,typel; label,type; label,type; ..."</t>
+	      <t>label ADD "label,type; label,type; label,type; ..."</t>
 
-      <t>For example, if the operator of example.com would like to also return
-      A record answers for images.example.com, css.example.com and both an A
-      and AAAA for data.example.com when queried for www.example.com he would
-      enter:</t>
+	      <t>For example, if the operator of example.com would like to also return
+	      A record answers for images.example.com, css.html.example.com and both an A
+	      and AAAA for data.example.com when queried for www.example.com he would
+	      enter:</t>
 
-      <t>www ADD "images,A; css,A; data,A; data,AAA;"</t>
+	      <t>www ADD "images,A; css.html,A; data,A; data,AAA;"</t>
 
-      <t>The entries in the ADD list are ordered. An authoritative nameserver
-      MUST attempt to insert the records in the order listed when filling the
-      response packet. This is to allow the operator to express a preference
-      in case all the records to not fit. The TTL of the records added to the
-      Additional section are the same as if queried directly.</t>
+	      <t>The entries in the ADD list are ordered. An authoritative nameserver
+	      SHOULD insert the records in the order listed when filling the
+	      response packet. This is to allow the operator to express a preference
+	      in case all the records to not fit. The TTL of the records added to the
+	      Additional section are MUST be the same as if queried directly.</t>
 
-      <t>In some cases the operator might not really know what all additional
-      records clients need. For example, the owner of www.example.com may have
-      outsourced his DNS operations to a third party. The DNS operator may be
-      able to mine their query logs, and see that, in a large majority of
-      cases, a recursive server asks for foo.example.com and then very soon
-      after asks for bar.example.com, and so may decide to optimize this by
-      opportunistically returning bar when queried for foo. This functionality
-      could also be included in the authoritative name server software itself,
-      but discussions of these re outside the scope of this document.</t>
+	      <t>In some cases the operator might not know what all additional
+	      records clients need. For example, the owner of www.example.com may have
+	      outsourced his DNS operations to a third party. DNS operators may be
+	      able to mine their query logs, and see that, in a large majority of
+	      cases, a recursive server asks for foo.example.com and then very soon
+	      after asks for bar.example.com, and so may decide to optimize this by
+	      opportunistically returning bar when queried for foo. This functionality
+	      could also be included in the authoritative name server software itself,
+	      but discussions of these re outside the scope of this
+	      document.</t>
+
+      </section>
+
+      <section title="Wire Format">
+	      <t>The wire format of the Additional RR is the same as
+	      the wire format for a TXT RR:</t>
+
+	      <t><figure><artwork>
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+    /                   TXT-DATA                    /
+    +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
+	      </artwork></figure></t>
+
+	      <t>Where TXT-DATA is one or more charter-strings.</t>
+      </section>
+
     </section>
 
     <section title="Signalling support">
