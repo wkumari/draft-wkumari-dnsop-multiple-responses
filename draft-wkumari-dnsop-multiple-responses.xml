@@ -279,12 +279,12 @@
 	      <t>Where TXT-DATA is one or more charter-strings.</t>
 
 	      <t>The Additional RR has RR type TBD [RFC Editor: insert
-	      the IANA assigned value and delete this note]
+	      the IANA assigned value and delete this note]</t>
       </section>
 
     </section>
 
-    <section title="Signalling support">
+    <section title="Signaling support" anchor="signaling">
       <t>Iterative nameservers that support Additional records signal this by
       setting the OPT record's AD bit (bit NN [TBD: assigned by
       IANA] in the EDNS0 extension header to 1.</t>
@@ -324,8 +324,14 @@
     </section>
 
     <section title="IANA Considerations">
-      <t>This document contains no IANA considerations.Template: Fill this
-      in!</t>
+      <t>This document contains the following IANA assignment
+      requirements:</t>
+      <t>
+	      <list style="numbers">
+		      <t>The AD bit discussed in <xref
+		      target="signaling" /> needs to be allocated.</t>
+	      </list>
+      </t>
     </section>
 
     <section anchor="security" title="Security Considerations">
