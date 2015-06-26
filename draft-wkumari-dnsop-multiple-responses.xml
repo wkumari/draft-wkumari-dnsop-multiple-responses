@@ -179,20 +179,26 @@
       below]</t>
 
       <t><list style="numbers">
-          <t>Additional records MUST only be included when the primary name is
-          DNSSEC secured.</t>
+          <t>Additional records MUST only be included when the primary
+          name and each additional record are signed using DNSSEC "valid".</t>
 
           <t>Additional records MUST only be served over TCP connections, or
           when DNS Cookies [ToDo: Ref] are in use. This is to mitigate Denial
           of Service reflection attacks.[1]</t>
 
-          <t>Additional records MUST be leaf records at the same node in the
-          DNS tree[2]</t>
+          <t>Additional records SHOULD be contained within the same
+          zone as the primary name[2], or MAY be additionally be
+          contained within a child zone for which the name server is
+          authoritative for, assuming all DNSSEC validation records
+          required to validate the child(ren) are included as well.
+          Note that the DS record, and NS and glue records for a child
+          zone may be returned even when no other additional data for
+          the child will be included.</t>
 
-          <t>The DNSSEC supporting information must be included. This is the
-          RRSIGs required to validate the Additional record information.</t>
-
-          <t>All of the records MUST be signed with the same DNSSEC keys.</t>
+          <t>The DNSSEC supporting information necessary to perform
+          validation on the records must be included. I.E., the RRSIGs
+          required to validate the Additional record information must
+          be included.</t>
 
           <t>The authoritative nameserver SHOULD include as many of the
           additional records as will fit in the response. Each Additional
@@ -224,14 +230,15 @@
     </section>
 
     <section title="Additional records pseudo-RR">
-      <t>To allow the authoritative nameserver operator to configure what
-      additional records to serve when it receives a query to a label, we
-      introduce the Additional pseudo Resource Record (RR). This is a
-      pseudo-record as it provides instruction to the authoritative
-      nameserver, and does not appear on the wire. [Ed note: I had originally
-      considered a comment, or some sort of format where we listed additional
-      records under the primary one, but we a: wanted it to survive zone
-      transfers, and b: not trip up zone file parsers. ]</t>
+      <t>To allow the authoritative nameserver operator to configure the
+      name server with the additional records to serve when it receives a
+      query to a label, we introduce the Additional pseudo Resource
+      Record (RR). This is a pseudo-record as it provides instruction
+      to the authoritative nameserver, and does not appear on the
+      wire. [Ed note: I had originally considered a comment, or some
+      sort of format where we listed additional records under the
+      primary one, but we a: wanted it to survive zone transfers, and
+      b: not trip up zone file parsers. ]</t>
 
       <t>The format of the Additional pseudo-RR is:</t>
 
