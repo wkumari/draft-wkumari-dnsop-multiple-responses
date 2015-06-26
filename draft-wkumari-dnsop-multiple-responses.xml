@@ -300,6 +300,17 @@ Assigning a meaning to the Z bit requires an IETF Standards Action.]]></artwork>
       instead... ]</t>
     </section>
 
+    <section title="Stub-Resolver Considerations">
+	    <t>No modifications need to be made to stub-resolvers to
+	    get the predominate benefit of this protocol, since the
+	    majority of the speed gain will take place between the
+	    validating recursive resolver and the authoritative name
+	    server.  However, stub resolvers may wish to query
+	    directly for the Additional RR if it wants to pre-query
+	    for data that will likely be needed in the process of
+	    supporting its application.</t>
+    </section>
+
     <section title="Use of Additional information">
       <t>When receiving Additional information, an iterative server follows
       certain rules:</t>
