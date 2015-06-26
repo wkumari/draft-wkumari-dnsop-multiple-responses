@@ -96,18 +96,18 @@
       <t>Often the name being resolved in the DNS provides information about
       why the name is being resolved, allowing the authoritative name server
       operator to predict what other answers the client will soon query for.
-      By providing multiple answers in the response, the authoritative name
+      By providing multiple answers in the response, an authoritative name
       server operator can ensure that the recursive server that the client is
       using has all the answers in its cache.</t>
 
       <t>For example, the name server operator of Example Widgets, Inc
       (example.com) knows that the example.com web page at www.example.com
-      contains various resources, including some images (served from
+      contains various other resources, including some images (served from
       images.example.com), some Cascading Style Sheets (served from
       css.example.com) and some JavaScript (data.example.com). A client
       attempting to resolve www.example.com is very likely to be a web
-      browser, rendering the page, and so will need to also resolve all of the
-      other names for these other resources. Providing all of these answers in
+      browser rendering the page and so will need to also resolve all of the
+      other names to obtain these other resources. Providing all of these answers in
       response to a query for www.example.com allows the recursive server to
       populate its cache and have all of the answers available when the client
       asks for them.</t>
