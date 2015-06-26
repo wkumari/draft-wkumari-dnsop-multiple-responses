@@ -277,27 +277,17 @@
 	      </artwork></figure></t>
 
 	      <t>Where TXT-DATA is one or more charter-strings.</t>
+
+	      <t>The Additional RR has RR type TBD [RFC Editor: insert
+	      the IANA assigned value and delete this note]
       </section>
 
     </section>
 
     <section title="Signalling support">
       <t>Iterative nameservers that support Additional records signal this by
-      setting the Z bit (bit 25 of the DNS header).</t>
-
-      <t><xref target="RFC5395"/> Section 2.1 says:</t>
-
-      <t><figure>
-          <artwork><![CDATA[There have been ancient DNS implementations for which the Z bit
-being on in a query meant that only a response from the primary
-server for a zone is acceptable. It is believed that current
-DNS implementations ignore this bit. 
-
-Assigning a meaning to the Z bit requires an IETF Standards Action.]]></artwork>
-        </figure></t>
-
-      <t>[ Ed note: Hey, was worth a try :-) I'm fine with an EDNS0 bit
-      instead... ]</t>
+      setting the OPT record's AD bit (bit NN [TBD: assigned by
+      IANA] in the EDNS0 extension header to 1.</t>
     </section>
 
     <section title="Stub-Resolver Considerations">
