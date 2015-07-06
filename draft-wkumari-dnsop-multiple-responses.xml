@@ -286,7 +286,7 @@
 
     <section title="Signaling support" anchor="signaling">
       <t>Iterative nameservers that support Additional records signal this by
-      setting the OPT record's AD bit (bit NN [TBD: assigned by
+      setting the OPT record's PL ("plus") bit (bit NN [TBD: assigned by
       IANA] in the EDNS0 extension header to 1.</t>
     </section>
 
@@ -328,7 +328,7 @@
       requirements:</t>
       <t>
 	      <list style="numbers">
-		      <t>The AD bit discussed in <xref
+		      <t>The PL bit discussed in <xref
 		      target="signaling" /> needs to be allocated.</t>
 	      </list>
       </t>
