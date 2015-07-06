@@ -3,7 +3,7 @@
 <!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
 ]>
 <!-- WK: Set category, IPR, docName -->
-<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-00.1"
+<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-01"
      ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -79,7 +79,7 @@
       </address>
     </author>
 
-    <date day="25" month="June" year="2015"/>
+    <date day="06" month="July" year="2015"/>
 
     <area>template</area>
 
