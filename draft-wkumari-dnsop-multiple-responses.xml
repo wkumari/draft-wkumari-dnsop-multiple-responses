@@ -94,11 +94,11 @@
   <middle>
     <section title="Introduction">
       <t>Often the name being resolved in the DNS provides information about
-      why the name is being resolved, allowing the authoritative name server
-      operator to predict what other answers the client will soon query for.
-      By providing multiple answers in the response, the authoritative name
-      server operator can ensure that the recursive server that the client is
-      using has all the answers in its cache.</t>
+      why the name is being resolved, allowing the nameserver to predict what
+      other answers the client will soon query for. By providing multiple
+      answers in the response, the authoritative name server operator can
+      ensure that the recursive server that the client is using has all the
+      answers in its cache. </t>
 
       <t>For example, the name server operator of Example Widgets, Inc
       (example.com) knows that the example.com web page at www.example.com
