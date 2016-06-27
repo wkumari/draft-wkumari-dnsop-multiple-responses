@@ -272,7 +272,7 @@
     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
     /                   TXT-DATA                    /
     +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
-	      ]]></artwork>
+              ]]></artwork>
           </figure></t>
 
         <t>Where TXT-DATA is one or more charter-strings.</t>
