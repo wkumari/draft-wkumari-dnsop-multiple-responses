@@ -3,7 +3,7 @@
 <!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
 ]>
 <!-- WK: Set category, IPR, docName -->
-<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-02"
+<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-03"
      ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -79,7 +79,7 @@
       </address>
     </author>
 
-    <date day="05" month="January" year="2016"/>
+    <date day="26" month="June" year="2016"/>
 
     <area>template</area>
 
@@ -93,16 +93,19 @@
 
   <middle>
     <section title="Introduction">
-      <t>Often the name being resolved in the DNS provides information about
-      why the name is being resolved, allowing the nameserver to predict what
-      other answers the client will soon query for. By providing multiple
-      answers in the response, the authoritative name server operator can
-      ensure that the recursive server that the client is using has all the
-      answers in its cache.</t>
+      <t>In many cases the name being resolved in the DNS provides information
+      about why the name is being resolved. This allows the authorative
+      nameserver to predict what other answers the recursive server will soon
+      query for. By providing multiple answers in the response, the
+      authoritative name server operator can ensure that the recursive server
+      that the client is using has all the answers in its cache. Apart from
+      decreasing the latency for end users this also decreases the number of
+      queries the recursive server needs to make and the autorative server
+      needs to answer. </t>
 
       <t>For example, the name server operator of Example Widgets, Inc
-      (example.com) knows that the example.com web page at www.example.com
-      contains various other resources, including some images (served from
+      (example.com) knows that the web page at www.example.com contains
+      various other resources, including some images (served from
       images.example.com), some Cascading Style Sheets (served from
       css.example.com) and some JavaScript (data.example.com). A client
       attempting to resolve www.example.com is very likely to be a web browser
@@ -115,7 +118,8 @@
       <t>Other examples where this technique is useful include SMTP (including
       the mail server address when serving the MX record), SRV (providing the
       target information in addition to the SRV response) and TLSA (providing
-      any TLSA records associated with a name).</t>
+      any TLSA records associated with a name). This same technique can
+      include both the IPv4 (A) and IPv6 (AAAA) addresses. </t>
 
       <t>This is purely an optimization - by providing all of other, related
       answers that the client is likely to need along with the answer that
@@ -137,9 +141,9 @@
       <t>The existing DNS specifications allow for additional information to
       be included in the "additional" section of the DNS response, but in
       order to defeat cache poisoning attacks most implementations either
-      ignore or don't trust additional information (other than for "glue").
-      For some more background, see <xref target="Ref.Bellovin"/>, <xref
-      target="RFC1034"/>, <xref target="RFC2181"/>.</t>
+      ignore or don't trust additional information. For some more background,
+      see <xref target="Ref.Bellovin"/>, <xref target="RFC1034"/>, <xref
+      target="RFC2181"/>.</t>
 
       <t>Not trusting the information in the additional section was necessary
       because there was no way to authenticate it. If you queried for
@@ -149,8 +153,6 @@
       world of ubiquitous DNSSEC deployment [Ed note: By the time this
       document is published, there *will* be ubiquitous DNSSEC :-) ] the
       iterative server can validate the information and trust it.</t>
-
-      <t/>
     </section>
 
     <section title="Terminology">
@@ -175,28 +177,14 @@
       response packet.</t>
 
       <t>In order to include Additional records in a response, certain
-      conditions need to be met. [Ed note: Some discussion on each rule is
-      below]</t>
+      conditions need to be met.</t>
 
       <t><list style="numbers">
-          <t>Additional records MUST only be included when the primary name
-          and each additional record are signed using DNSSEC "valid".</t>
-
-          <t>Additional records MUST only be served over TCP connections, or
-          when DNS Cookies [ToDo: Ref] are in use. This is to mitigate Denial
-          of Service reflection attacks.[1]</t>
-
-          <t>Additional records SHOULD be contained within the same zone as
-          the primary name[2], or MAY be additionally be contained within a
-          child zone for which the name server is authoritative for, assuming
-          all DNSSEC validation records required to validate the child(ren)
-          are included as well. Note that the DS record, and NS and glue
-          records for a child zone may be returned even when no other
-          additional data for the child will be included.</t>
+          <t>Additional records MUST only be included when the server is
+          authorative for the zone, and the records are DNSSEC signed.</t>
 
           <t>The DNSSEC supporting information necessary to perform validation
-          on the records must be included. I.E., the RRSIGs required to
-          validate the Additional record information must be included.</t>
+          on the records MUST be included.</t>
 
           <t>The authoritative nameserver SHOULD include as many of the
           additional records as will fit in the response. Each Additional
@@ -205,26 +193,8 @@
           records list.</t>
 
           <t>Operators SHOULD only include Additional answers that they expect
-          a client to actually need. [3]</t>
+          a client to actually need.</t>
         </list></t>
-
-      <t>[Ed note 1: The above MAY be troll bait. I'm not really sure if this
-      is a good idea or not - moving folk towards TCP is probably a good idea,
-      and this is somewhat of an optional record type. Then again, special
-      handing (TCP only) for a record would be unusual. Additional records
-      could cause responses to become really large, but there are already
-      enough large records that can be used for reflection attacks that we can
-      just give up on the whole "keep responses as small as possible" ship.
-      ]</t>
-
-      <t>[Ed note 2: This is poorly worded. I mumbled about bailiwick,
-      subdomains, etc but nothing I could come up with was better. Also, is
-      this rule actually needed? I *think* it would be bad for .com servers to
-      be able to include Additional records for www.foo.bar.baz.example.com,
-      but perhaps &lt;handwave&gt;public-suffix-list?! This rule also makes it
-      easier to decide what all DNSSEC information is required.]</t>
-
-      <t>[Ed note 3: This is not enforceable. ]</t>
     </section>
 
     <section title="Additional records pseudo-RR">
@@ -309,13 +279,13 @@
 
           <t>Additional records SHOULD have lower priority in the cache than
           answers received because they were requested. This is to help evict
-          Additional records from the cache first, and help stop cache filling
-          attacks.</t>
+          Additional records from the cache first (to help prevent cache
+          filling attacks).</t>
 
           <t>Iterative servers MAY choose to ignore Additional records for any
           reason, including CPU or cache space concerns, phase of the moon,
-          etc. It may choose to only accept all, some or none of the
-          Additional records.</t>
+          etc. It may choose to accept all, some or none of the Additional
+          records.</t>
         </list></t>
     </section>
 
@@ -332,7 +302,8 @@
     <section anchor="security" title="Security Considerations">
       <t>Additional records will make DNS responses even larger than they are
       currently, leading to more large records that can be used for DNS
-      reflection attacks. We mitigate this by only serving these over TCP.</t>
+      reflection attacks. We mitigate this by only serving these over TCP or
+      Cookies.</t>
 
       <t>A malicious authoritative server could include a large number of
       Additional records (and associated DNSSEC information) and attempt to
@@ -341,9 +312,9 @@
       to bandwidth), but we mitigate this by allowing the iterative to ignore
       Additional records whenever it wants.</t>
 
-      <t>By requiring the ALL of the Additional records are signed, and all
-      necessary DNSSEC information for validation be included we avoid cache
-      poisoning (I hope :-))</t>
+      <t>Requiring the ALL of the Additional records are signed, and all
+      necessary DNSSEC information for validation be included avoids cache
+      poisoning.</t>
     </section>
 
     <section title="Acknowledgements">
@@ -361,6 +332,8 @@
       <?rfc include='reference.RFC.1034'?>
 
       <?rfc include='reference.RFC.5395'?>
+
+      <?rfc include='reference.RFC.7873'?>
 
       <reference anchor="Ref.Bellovin"
                  target="https://www.cs.columbia.edu/~smb/papers/dnshack.pdf">
@@ -390,6 +363,10 @@
 
       <t><list style="symbols">
           <t>Nothing changed in the template!</t>
+        </list>From -02 to -3:<list>
+          <t>Sat down and rewrote / cleaned up the text.</t>
+
+          <t/>
         </list></t>
     </section>
   </back>
