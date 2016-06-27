@@ -360,8 +360,6 @@
 
       <?rfc include='reference.RFC.1034'?>
 
-      <?rfc include='reference.RFC.5395'?>
-
       <reference anchor="Ref.Bellovin"
                  target="https://www.cs.columbia.edu/~smb/papers/dnshack.pdf">
         <front>
