@@ -378,9 +378,10 @@
       </reference>
     </references>
 
-    <references title="Informative References">
-      <?rfc include='reference.I-D.draft-ietf-sidr-iana-objects-03.xml'?>
-    </references>
+    <!--
+        <references title="Informative References">
+        </references>
+    -->
 
     <section title="Changes / Author Notes.">
       <t>[RFC Editor: Please remove this section before publication ]</t>
