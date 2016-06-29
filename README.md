@@ -82,32 +82,32 @@ Table of Contents
 
 1.  Introduction
 
-   In many cases the name being resolved in the DNS provides information
-   about why the name is being resolved.  This allows the authorative
-   nameserver to predict what other answers the recursive server will
-   soon query for.  By providing multiple answers in the response, the
-   authoritative name server operator can ensure that the recursive
-   server that the client is using has all the answers in its cache.
-   Apart from decreasing the latency for end users this also decreases
-   the number of queries the recursive server needs to make and the
-   autorative server needs to answer.
+   In many cases the name being resolved in the DNS provides the reason
+   behind why the name is being resolved.  This may allow the
+   authorative nameserver to predict what other answers the recursive
+   server will soon query for.  By providing multiple answers in the
+   response, the authoritative name server operator can assist a caching
+   recursive resolver in pre-poulating its cache before the client asks
+   for the subsequent queries.  Apart from decreasing the latency for
+   end users, this also decreases the total number of queries that the
+   recursive server needs to make and the autorative server needs to
+   answer.
 
    For example, the name server operator of Example Widgets, Inc
    (example.com) knows that the web page at www.example.com contains
    various other resources, including some images (served from
    images.example.com), some Cascading Style Sheets (served from
-   css.example.com) and some JavaScript (data.example.com).  A client
-   attempting to resolve www.example.com is very likely to be a web
-   browser rendering the page and so will need to also resolve all of
-   the other names to obtain these other resources.  Providing all of
-   these answers in response to a query for www.example.com allows the
-   recursive server to populate its cache and have all of the answers
-   available when the client asks for them.
+   css.example.com) and some JavaScript (served from data.example.com).
+   An application attempting to resolve www.example.com is very likely
+   to be a web browser rendering the page and will also need to resolve
+   all of these other names as well.  Providing all of these answers in
+   response to a query for www.example.com allows the recursive server
+   to pre-populate its cache and have these answers available
+   immediately when the client asks for them.
 
-   Other examples where this technique is useful include SMTP (including
-   the mail server address when serving the MX record), SRV (providing
-   the target information in addition to the SRV response) and TLSA
-
+   Other examples where this technique may be useful include SMTP
+   (including mail server addresses, SPF and DKIM records when serving
+   the MX record), SRV (providing the target information in addition to
 
 
 
@@ -116,14 +116,16 @@ Kumari, et al.          Expires December 28, 2016               [Page 2]
 Internet-Draft            DNS Multiple Answers                 June 2016
 
 
-   (providing any TLSA records associated with a name).  This same
-   technique can include both the IPv4 (A) and IPv6 (AAAA) addresses.
+   the SRV response) and TLSA (providing any TLSA records associated
+   with a name).  This same technique can include both the IPv4 (A) and
+   IPv6 (AAAA) addresses for any address query.
 
-   This is purely an optimization - by providing all of other, related
-   answers that the client is likely to need along with the answer that
-   they requested, users get a better experience, iterative servers need
-   to perform less queries, authoritative servers have to answer fewer
-   queries, etc.
+   This itechnique, described in this document, is purely an
+   optimization - by providing all of other, related answers that the
+   client is likely to need along with the answer that they requested,
+   users get a better experience, iterative servers need to perform less
+   queries, authoritative servers have to answer fewer queries, etc.
+   [ed: add ref to happy eyeballs rfc]
 
 1.1.  Requirements notation
 
@@ -136,17 +138,18 @@ Internet-Draft            DNS Multiple Answers                 June 2016
    The existing DNS specifications allow for additional information to
    be included in the "additional" section of the DNS response, but in
    order to defeat cache poisoning attacks most implementations either
-   ignore or don't trust additional information.  For some more
-   background, see [Ref.Bellovin], [RFC1034], [RFC2181].
+   ignore or don't trust additional records they didn't ask for.  For
+   more background, see [Ref.Bellovin], [RFC1034], [RFC2181].
 
    Not trusting the information in the additional section was necessary
-   because there was no way to authenticate it.  If you queried for
-   www.example.com and got back answers for www.invalid.com you couldn't
-   tell if these were actually from invalid.com or if an attacker was
-   trying to get bad information for invalid.com into your cache.  In a
-   world of ubiquitous DNSSEC deployment [Ed note: By the time this
-   document is published, there *will* be ubiquitous DNSSEC :-) ] the
-   iterative server can validate the information and trust it.
+   because there was no way to authenticate it.  If a resolver queries
+   for www.example.com and received answers for www.invalid.com as well,
+   it is impoosible for a non-validating resolver tell if these were
+   actually from invalid.com or if an attacker was trying to get bad
+   information for invalid.com into its cache.  In a world of ubiquitous
+   DNSSEC deployment [Ed note: By the time this document is published,
+   there *will* be ubiquitous DNSSEC :-) ], a validating resolver can
+   validate, authenticateand trust the additional information.
 
 3.  Terminology
 
@@ -157,12 +160,9 @@ Internet-Draft            DNS Multiple Answers                 June 2016
       the name server operator would like to return additional answers
       for.
 
-   Supporting information  Supporting information is the DNSSEC RRSIGs
-      that prove the authenticity of the Additional records.
-
-
-
-
+   Supporting DNSSEC information  Supporting DNSSEC information is the
+      DNSSEC RRSIGs that prove the authenticity of the Additional
+      records.
 
 
 
@@ -175,8 +175,8 @@ Internet-Draft            DNS Multiple Answers                 June 2016
 4.  Returning multiple answers
 
    The authoritative nameserver should include as many of the instructed
-   Additional records and Supporting information as will fit in the
-   response packet.
+   Additional records and Supporting DNSSEC information as will fit in
+   the response packet.
 
    In order to include Additional records in a response, certain
    conditions need to be met.
@@ -184,23 +184,26 @@ Internet-Draft            DNS Multiple Answers                 June 2016
    1.  Additional records MUST only be included when the server is
        authorative for the zone, and the records are DNSSEC signed.
 
-   2.  The DNSSEC supporting information necessary to perform validation
+   2.  The supporting DNSSEC information necessary to perform validation
        on the records MUST be included.
 
    3.  The authoritative nameserver SHOULD include as many of the
-       additional records as will fit in the response.  Each Additional
-       record MUST have its matching Supporting information.  Additional
+       additional records as will fit in the response.  Additional
        records MUST be inserted in the order specified in the Additional
        records list.
 
    4.  Operators SHOULD only include Additional answers that they expect
-       a client to actually need.
+       a client to need.
 
 5.  Additional records pseudo-RR
 
    To allow the authoritative nameserver operator to configure the name
    server with the additional records to serve when it receives a query
-   to a label, we introduce the Additional Resource Record (RR).
+   to a label, we introduce the Additional Resource Record (RR).  This
+   resource record is used to provide instruction to the nameserver (and
+   to allow transfer from master to slave), it does not actually carry
+   the information from authorative to recursive - the information is
+   transmitted in the additional section.
 
 5.1.  File Format
 
@@ -217,9 +220,6 @@ Internet-Draft            DNS Multiple Answers                 June 2016
 
    The entries in the ADD list are ordered.  An authoritative nameserver
    SHOULD insert the records in the order listed when filling the
-   response packet.  This is to allow the operator to express a
-   preference in case all the records to not fit.  The TTL of the
-
 
 
 
@@ -228,6 +228,8 @@ Kumari, et al.          Expires December 28, 2016               [Page 4]
 Internet-Draft            DNS Multiple Answers                 June 2016
 
 
+   response packet.  This is to allow the operator to express a
+   preference in case all the records to not fit.  The TTL of the
    records added to the Additional section are MUST be the same as if
    queried directly.
 
@@ -271,8 +273,6 @@ Internet-Draft            DNS Multiple Answers                 June 2016
    query directly for the Additional RR if it wants to pre-query for
    data that will likely be needed in the process of supporting its
    application.
-
-
 
 
 
