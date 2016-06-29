@@ -408,15 +408,16 @@
       <t><list style="symbols">
           <t>Nothing changed in the template!</t>
         </list>From -02 to -3:<list>
-          <t>Sat down and rewrote / cleaned up the text.</t>
+          <t>Sat down and rewrote and cleaned up large sections of text.</t>
 
-          <t>Changed name of RR from Additional to Extra (Additional is an
-          overloaded term!)</t>
+          <t>Changed name of RR from Additional to EXTRA (the term
+          "Additional" is overloaded in general)</t>
 
-          <t>Clarified that stubs MAY use this.</t>
+          <t>Clarified that stub resolvers and other clients MAY use
+          this specification.</t>
 
           <t>Attempted to clarify that the individual RRs are added to the
-          response, not the EXTRA record itself. The EXTRA RR can be queries
+          response, not the EXTRA record itself. The EXTRA RR can be queried
           directly.</t>
         </list></t>
     </section>
