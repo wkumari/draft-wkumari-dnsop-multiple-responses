@@ -67,7 +67,7 @@ Table of Contents
    2.  Background  . . . . . . . . . . . . . . . . . . . . . . . . .   3
    3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
    4.  Returning multiple answers  . . . . . . . . . . . . . . . . .   4
-   5.  Additional records pseudo-RR  . . . . . . . . . . . . . . . .   4
+   5.  Extra Resource Record . . . . . . . . . . . . . . . . . . . .   4
      5.1.  File Format . . . . . . . . . . . . . . . . . . . . . . .   4
      5.2.  Wire Format . . . . . . . . . . . . . . . . . . . . . . .   5
    6.  Signaling support . . . . . . . . . . . . . . . . . . . . . .   5
@@ -84,7 +84,7 @@ Table of Contents
 
    In many cases the name being resolved in the DNS provides the reason
    behind why the name is being resolved.  This may allow the
-   authorative nameserver to predict what other answers the recursive
+   authoritative nameserver to predict what other answers the recursive
    server will soon query for.  By providing multiple answers in the
    response, the authoritative name server operator can assist a caching
    recursive resolver in pre-poulating its cache before the client asks
@@ -120,12 +120,12 @@ Internet-Draft            DNS Multiple Answers                 June 2016
    with a name).  This same technique can include both the IPv4 (A) and
    IPv6 (AAAA) addresses for any address query.
 
-   This itechnique, described in this document, is purely an
-   optimization - by providing all of other, related answers that the
-   client is likely to need along with the answer that they requested,
-   users get a better experience, iterative servers need to perform less
-   queries, authoritative servers have to answer fewer queries, etc.
-   [ed: add ref to happy eyeballs rfc]
+   This technique, described in this document, is purely an optimization
+   - by providing all of other, related answers that the client is
+   likely to need along with the answer that they requested, users get a
+   better experience, iterative servers need to perform less queries,
+   authoritative servers have to answer fewer queries, etc. [ed: add ref
+   to happy eyeballs rfc]
 
 1.1.  Requirements notation
 
@@ -144,25 +144,25 @@ Internet-Draft            DNS Multiple Answers                 June 2016
    Not trusting the information in the additional section was necessary
    because there was no way to authenticate it.  If a resolver queries
    for www.example.com and received answers for www.invalid.com as well,
-   it is impoosible for a non-validating resolver tell if these were
+   it is impossible for a non-validating resolver tell if these were
    actually from invalid.com or if an attacker was trying to get bad
    information for invalid.com into its cache.  In a world of ubiquitous
    DNSSEC deployment [Ed note: By the time this document is published,
    there *will* be ubiquitous DNSSEC :-) ], a validating resolver can
-   validate, authenticateand trust the additional information.
+   validate, authenticate and trust the additional information.
 
 3.  Terminology
 
    Additional records  Additional records are records that the
       authoritative nameserver has included in the Additional section.
 
+   EXTRTA Resource Record  The EXTRA resource record (defined below)
+      carries a list fo additional records to send.
+
    Primary query  A Primary query (or primary question) is a QNAME that
       the name server operator would like to return additional answers
       for.
 
-   Supporting DNSSEC information  Supporting DNSSEC information is the
-      DNSSEC RRSIGs that prove the authenticity of the Additional
-      records.
 
 
 
@@ -172,54 +172,54 @@ Kumari, et al.          Expires December 28, 2016               [Page 3]
 Internet-Draft            DNS Multiple Answers                 June 2016
 
 
+   Supporting DNSSEC information  Supporting DNSSEC information is the
+      DNSSEC RRSIGs that prove the authenticity of the Additional
+      records.
+
 4.  Returning multiple answers
 
    The authoritative nameserver should include as many of the instructed
-   Additional records and Supporting DNSSEC information as will fit in
-   the response packet.
+   additional records identified by the Extra Resource Record and
+   Supporting DNSSEC information as will fit in the response packet.
+   These additional records (and Supporting DNSSEC information) are
+   appended to the additional section of the response.
 
-   In order to include Additional records in a response, certain
+   In order to include additional records in a response, certain
    conditions need to be met.
 
    1.  Additional records MUST only be included when the server is
-       authorative for the zone, and the records are DNSSEC signed.
+       authoritative for the zone, and the records are DNSSEC signed.
 
    2.  The supporting DNSSEC information necessary to perform validation
        on the records MUST be included.
 
    3.  The authoritative nameserver SHOULD include as many of the
        additional records as will fit in the response.  Additional
-       records MUST be inserted in the order specified in the Additional
-       records list.
+       records SHOULD be inserted in the order specified in the
+       Additional records list.
 
-   4.  Operators SHOULD only include Additional answers that they expect
-       a client to need.
+   4.  Operators SHOULD only include EXTRA Resource Records to send
+       additional answers that they expect a client to need.
 
-5.  Additional records pseudo-RR
+5.  Extra Resource Record
 
-   To allow the authoritative nameserver operator to configure the name
-   server with the additional records to serve when it receives a query
-   to a label, we introduce the Additional Resource Record (RR).  This
-   resource record is used to provide instruction to the nameserver (and
-   to allow transfer from master to slave), it does not actually carry
-   the information from authorative to recursive - the information is
-   transmitted in the additional section.
+   To allow the authoritative nameserver operator to instruct the name
+   server which additional records to serve when it receives a query to
+   a label, we introduce the EXTRA Resource Record (RR).  These
+   additional records are individually appended to the additional
+   section (note that the EXTRA RR itself is not appended).  The EXTRA
+   resource record MAY still be queried for directly (e.g for
+   debugging), in which case the record itself is returned.
 
 5.1.  File Format
 
-   The format of the Additional RR is:
+   The format of the Extra RR is:
 
-   label ADD "label,type; label,type; label,type; ..."
+   label EXTRA "label,type; label,type; label,type; ..."
 
    For example, if the operator of example.com would like to also return
    A record answers for images.example.com, css.html.example.com and
-   both an A and AAAA for data.example.com when queried for
-   www.example.com he would enter:
 
-   www ADD "images,A; css.html,A; data,A; data,AAA;"
-
-   The entries in the ADD list are ordered.  An authoritative nameserver
-   SHOULD insert the records in the order listed when filling the
 
 
 
@@ -228,7 +228,14 @@ Kumari, et al.          Expires December 28, 2016               [Page 4]
 Internet-Draft            DNS Multiple Answers                 June 2016
 
 
-   response packet.  This is to allow the operator to express a
+   both an A and AAAA for data.example.com when queried for
+   www.example.com he would enter:
+
+   www EXTRA "images,A; css.html,A; data,A; data,AAA;"
+
+   The entries in the EXRTA list are ordered.  An authoritative
+   nameserver SHOULD insert the records in the order listed when filling
+   the response packet.  This is to allow the operator to express a
    preference in case all the records to not fit.  The TTL of the
    records added to the Additional section are MUST be the same as if
    queried directly.
@@ -246,22 +253,22 @@ Internet-Draft            DNS Multiple Answers                 June 2016
 
 5.2.  Wire Format
 
-   The wire format of the Additional RR is the same as the wire format
-   for a TXT RR:
+   The wire format of the EXTRA RR is the same as the wire format for a
+   TXT RR:
 
        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
        /                   TXT-DATA                    /
        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
 
-   Where TXT-DATA is one or more charter-strings.
+   Where TXT-DATA is one or more character-strings.
 
-   The Additional RR has RR type TBD [RFC Editor: insert the IANA
-   assigned value and delete this note]
+   The Extra RR has RR type TBD [RFC Editor: insert the IANA assigned
+   value and delete this note]
 
 6.  Signaling support
 
-   Iterative nameservers that support Additional records signal this by
-   setting the OPT record's PL ("plus") bit (bit NN [TBD: assigned by
+   Iterative nameservers (or stubs) that support EXTRA records signal
+   this by setting the OPT record's EXTRA bit (bit NN [TBD: assigned by
    IANA] in the EDNS0 extension header to 1.
 
 7.  Stub-Resolver Considerations
@@ -269,13 +276,6 @@ Internet-Draft            DNS Multiple Answers                 June 2016
    No modifications need to be made to stub-resolvers to get the
    predominate benefit of this protocol, since the majority of the speed
    gain will take place between the validating recursive resolver and
-   the authoritative name server.  However, stub resolvers may wish to
-   query directly for the Additional RR if it wants to pre-query for
-   data that will likely be needed in the process of supporting its
-   application.
-
-
-
 
 
 
@@ -284,9 +284,14 @@ Kumari, et al.          Expires December 28, 2016               [Page 5]
 Internet-Draft            DNS Multiple Answers                 June 2016
 
 
+   the authoritative name server.  However, stub resolvers may choose to
+   support this technique, and / or may query directly for the EXTRA RR
+   if it wants to pre-query for data that will likely be needed in the
+   process of supporting its application.
+
 8.  Use of Additional information
 
-   When receiving Additional information, an iterative server follows
+   When receiving Additional information, a server / stub follows
    certain rules:
 
    1.  Additional records MUST be validated before being used.
@@ -308,18 +313,17 @@ Internet-Draft            DNS Multiple Answers                 June 2016
 
    This document contains the following IANA assignment requirements:
 
-   1.  The PL bit discussed in Section 6 needs to be allocated.
+   1.  The EXTRA bit discussed in Section 6 needs to be allocated.
 
 10.  Security Considerations
 
    Additional records will make DNS responses even larger than they are
    currently, leading to more large records that can be used for DNS
-   reflection attacks.  We mitigate this by only serving these over TCP
-   or Cookies.
+   reflection attacks.
 
    A malicious authoritative server could include a large number of
-   Additional records (and associated DNSSEC information) and attempt to
-   DoS the recursive by making it do lots of DNSSEC validation.  I don't
+   extra records (and associated DNSSEC information) and attempt to DoS
+   the recursive by making it do lots of DNSSEC validation.  I don't
    view this as a very serious threat (CPU for validation is cheap
    compared to bandwidth), but we mitigate this by allowing the
    iterative to ignore Additional records whenever it wants.
@@ -327,10 +331,6 @@ Internet-Draft            DNS Multiple Answers                 June 2016
    Requiring the ALL of the Additional records are signed, and all
    necessary DNSSEC information for validation be included avoids cache
    poisoning.
-
-
-
-
 
 
 
@@ -384,10 +384,10 @@ Appendix A.  Changes / Author Notes.
 
       Sat down and rewrote / cleaned up the text.
 
+      Changed name of RR from Additional to Extra (Additional is an
+      overloaded term!)
 
-
-
-
+      Clarified that stubs MAY use this.
 
 
 
@@ -395,6 +395,10 @@ Kumari, et al.          Expires December 28, 2016               [Page 7]
 
 Internet-Draft            DNS Multiple Answers                 June 2016
 
+
+      Attempted to clarify that the individual RRs are added to the
+      response, not the EXTRA record itself.  The EXTRA RR can be
+      queries directly.
 
 Authors' Addresses
 
@@ -423,10 +427,6 @@ Authors' Addresses
    US
 
    Email: ietf@hardakers.net
-
-
-
-
 
 
 
