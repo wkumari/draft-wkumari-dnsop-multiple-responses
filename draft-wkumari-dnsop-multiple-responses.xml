@@ -189,6 +189,12 @@
           <t>The supporting DNSSEC information necessary to perform validation
           on the records MUST be included.</t>
 
+          <!-- reminder note for Ed's: children records and other
+               zones can't be included because they may be regional
+               differences between where the authoritative server
+               being queried gets different response from the client
+               requesting data.  -->
+
           <t>The authoritative nameserver SHOULD include as many of the
           additional records as will fit in the response. Additional records
           MUST be inserted in the order specified in the Additional records
