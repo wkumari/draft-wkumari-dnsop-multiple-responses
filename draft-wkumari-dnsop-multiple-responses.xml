@@ -22,7 +22,7 @@
   <front>
     <!-- WK: Set long title. -->
 
-    <title abbrev="DNS Multiple Answers">Returning multiple answers in DNS
+    <title abbrev="DNS Extra Answers">Returning extra answers in DNS
     responses.</title>
 
     <author fullname="Warren Kumari" initials="W." surname="Kumari">
@@ -93,41 +93,46 @@
 
   <middle>
     <section title="Introduction">
-      <t>In many cases the name being resolved in the DNS provides the reason
-      behind why the name is being resolved. This may allow the authoritative
-      nameserver to predict what other answers the recursive server will soon
-      query for. By providing multiple answers in the response, the
-      authoritative name server operator can assist a caching recursive
-      resolver in pre-poulating its cache before the client asks for the
-      subsequent queries. Apart from decreasing the latency for end users,
-      this also decreases the total number of queries that the recursive
-      server needs to make and the autorative server needs to answer.</t>
+      <t>In many cases a name being resolved in the DNS provides the
+      reason behind why the name is being resolved. This may allow the
+      authoritative nameserver to predict what other answers a
+      recursive resolver will soon query for. By providing multiple
+      answers in the response, the authoritative name server operator
+      can assist a caching recursive resolver in pre-populating its
+      cache before a stub resolver or other client asks for the
+      subsequent queries. Apart from decreasing the latency for end
+      users <xref target="RFC6555" />, this also decreases the total
+      number of queries that the recursive resolver needs to send and
+      the autorative server needs to answer.</t>
 
-      <t>For example, the name server operator of Example Widgets, Inc
-      (example.com) knows that the web page at www.example.com contains
-      various other resources, including some images (served from
-      images.example.com), some Cascading Style Sheets (served from
-      css.example.com) and some JavaScript (served from data.example.com). An
-      application attempting to resolve www.example.com is very likely to be a
-      web browser rendering the page and will also need to resolve all of
-      these other names as well. Providing all of these answers in response to
-      a query for www.example.com allows the recursive server to pre-populate
-      its cache and have these answers available immediately when the client
+      <t>For example, the domain name administrator of Example
+      Widgets, Inc (example.com) knows that the web page at
+      www.example.com contains various other resources, including some
+      images (served from images.example.com), some Cascading Style
+      Sheets (served from css.example.com) and some JavaScript (served
+      from data.example.com). An application attempting to resolve
+      www.example.com is very likely to be a web browser rendering the
+      page and will likely also need to resolve all of these
+      additional names as well. Providing all of these answers in
+      response to a query for www.example.com allows the recursive
+      resolver to pre-populate its cache and have these answers
+      available immediately when a stub resolver or other DNS client
       asks for them.</t>
 
-      <t>Other examples where this technique may be useful include SMTP
-      (including mail server addresses, SPF and DKIM records when serving the
-      MX record), SRV (providing the target information in addition to the SRV
-      response) and TLSA (providing any TLSA records associated with a name).
-      This same technique can include both the IPv4 (A) and IPv6 (AAAA)
-      addresses for any address query.</t>
+      <t>Other examples where this technique may be useful include
+      SMTP (by including mail server addresses, SPF and DKIM records
+      when serving the MX record), SRV (by providing the target
+      information in addition to the SRV response) and TLSA (by
+      providing any TLSA records associated with a name).  This same
+      technique can also be used to include both the IPv4 (A) and IPv6
+      (AAAA) addresses for any singular address query.</t>
 
-      <t>This technique, described in this document, is purely an optimization
-      - by providing all of other, related answers that the client is likely
-      to need along with the answer that they requested, users get a better
-      experience, iterative servers need to perform less queries,
-      authoritative servers have to answer fewer queries, etc. [ed: add ref to
-      happy eyeballs rfc]</t>
+      <t>This technique, described in this document, is purely an
+      optimization and enables a zone publisher to distribute other
+      related answers that the client is likely to need along with an
+      answer to the original request.  Users get a better experience,
+      recursive resolvers need to send less queries, authoritative
+      servers have to answer fewer queries, etc.</t>
 
       <t/>
 
@@ -344,15 +349,17 @@
 
   <back>
     <references title="Normative References">
-      <?rfc include='reference.RFC.1034'?>
+      <?rfc include='reference.RFC.1034' ?>
 
       <?rfc include='reference.RFC.2119' ?>
 
-      <?rfc include='reference.RFC.2181'?>
+      <?rfc include='reference.RFC.2181' ?>
 
-      <?rfc include='reference.RFC.5395'?>
+      <?rfc include='reference.RFC.5395' ?>
 
-      <?rfc include='reference.RFC.7873'?>
+      <?rfc include='reference.RFC.6555' ?>
+      
+      <?rfc include='reference.RFC.7873' ?>
 
 
       <reference anchor="Ref.Bellovin"
