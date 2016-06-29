@@ -341,7 +341,7 @@
       they are currently, leading to larger records that can be used
       in DNS reflection attacks. One could mitigate this by only
       serving responses to EXTRA requests over TCP or when using
-      Cookies <xref target="RFC5395">, although there is no easy way
+      Cookies <xref target="RFC5395"/>, although there is no easy way
       to signal this to a client other than through the use of the
       truncate bit.</t>
 
