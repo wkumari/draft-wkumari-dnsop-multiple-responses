@@ -7,10 +7,10 @@
 dnsop                                                          W. Kumari
 Internet-Draft                                                    Google
 Intended status: Standards Track                                  Z. Yan
-Expires: December 28, 2016                                         CNNIC
+Expires: December 31, 2016                                         CNNIC
                                                              W. Hardaker
                                                            Parsons, Inc.
-                                                           June 26, 2016
+                                                           June 29, 2016
 
 
                Returning extra answers in DNS responses.
@@ -36,7 +36,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 28, 2016.
+   This Internet-Draft will expire on December 31, 2016.
 
 Copyright Notice
 
@@ -55,7 +55,7 @@ Copyright Notice
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 1]
+Kumari, et al.          Expires December 31, 2016               [Page 1]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -111,7 +111,7 @@ Table of Contents
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 2]
+Kumari, et al.          Expires December 31, 2016               [Page 2]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -167,7 +167,7 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 3]
+Kumari, et al.          Expires December 31, 2016               [Page 3]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -223,7 +223,7 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 4]
+Kumari, et al.          Expires December 31, 2016               [Page 4]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -279,7 +279,7 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 5]
+Kumari, et al.          Expires December 31, 2016               [Page 5]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -335,7 +335,7 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 6]
+Kumari, et al.          Expires December 31, 2016               [Page 6]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -391,7 +391,7 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 7]
+Kumari, et al.          Expires December 31, 2016               [Page 7]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -447,7 +447,7 @@ Authors' Addresses
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 8]
+Kumari, et al.          Expires December 31, 2016               [Page 8]
 
 Internet-Draft              DNS Extra Answers                  June 2016
 
@@ -503,5 +503,5 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 28, 2016               [Page 9]
+Kumari, et al.          Expires December 31, 2016               [Page 9]
 ```
