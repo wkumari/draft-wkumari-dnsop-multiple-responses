@@ -305,9 +305,6 @@
       <t><list style="numbers">
           <t>Additional records MUST be validated before being used.</t>
 
-          <t>Additional records SHOULD be annotated in the cache as having
-          been received as Additional records.</t>
-
           <t>Additional records SHOULD have lower priority in the cache than
           answers received because they were requested. This is to help evict
           Additional records from the cache first (to help prevent cache

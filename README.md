@@ -307,15 +307,12 @@ Internet-Draft              DNS Extra Answers                  July 2016
 
    1.  Additional records MUST be validated before being used.
 
-   2.  Additional records SHOULD be annotated in the cache as having
-       been received as Additional records.
-
-   3.  Additional records SHOULD have lower priority in the cache than
+   2.  Additional records SHOULD have lower priority in the cache than
        answers received because they were requested.  This is to help
        evict Additional records from the cache first (to help prevent
        cache filling attacks).
 
-   4.  Recursive resolvers MAY choose to ignore Additional records for
+   3.  Recursive resolvers MAY choose to ignore Additional records for
        any reason, including CPU or cache space concerns, phase of the
        moon, etc.  It may choose to accept all, some or none of the
        Additional records.
@@ -332,6 +329,9 @@ Internet-Draft              DNS Extra Answers                  July 2016
    currently, leading to larger records that can be used in DNS
    reflection attacks.  One could mitigate this by only serving
    responses to EXTRA requests over TCP or when using Cookies [RFC5395],
+   although there is no easy way to signal this to a client other than
+   through the use of the truncate bit.
+
 
 
 
@@ -339,9 +339,6 @@ Kumari, et al.          Expires January 12, 2017                [Page 6]
 
 Internet-Draft              DNS Extra Answers                  July 2016
 
-
-   although there is no easy way to signal this to a client other than
-   through the use of the truncate bit.
 
    A malicious authoritative server could include a large number of
    extra records (and associated DNSSEC information) and attempt to DoS
@@ -388,6 +385,9 @@ Internet-Draft              DNS Extra Answers                  July 2016
    [RFC6555]  Wing, D. and A. Yourtchenko, "Happy Eyeballs: Success with
               Dual-Stack Hosts", RFC 6555, DOI 10.17487/RFC6555, April
               2012, <http://www.rfc-editor.org/info/rfc6555>.
+
+
+
 
 
 
