@@ -79,7 +79,7 @@
       </address>
     </author>
 
-    <date day="29" month="June" year="2016"/>
+    <date day="11" month="July" year="2016"/>
 
     <area>template</area>
 
@@ -102,7 +102,7 @@
       client asks for the subsequent queries. Apart from decreasing the
       latency for end users <xref target="RFC6555"/>, this also decreases the
       total number of queries that the recursive resolver needs to send and
-      the autorative server needs to answer.</t>
+      the authoritative server needs to answer.</t>
 
       <t>For example, the domain name administrator of Example Widgets, Inc
       (example.com) knows that the web page at www.example.com contains
@@ -166,7 +166,7 @@
           the authoritative nameserver has included in the Additional
           section.</t>
 
-          <t hangText="EXTRTA Resource Record">The EXTRA resource record
+          <t hangText="EXTRA Resource Record">The EXTRA resource record
           (defined below) carries a list fo additional records to send.</t>
 
           <t hangText="Primary query">A Primary query (or primary question) is
@@ -230,7 +230,7 @@
       returned.</t>
 
       <section title="File Format">
-        <t>The format of the Extra RR is:</t>
+        <t>The format of the EXTRA RR is:</t>
 
         <t>label EXTRA "label,type; label,type; label,type; ..."</t>
 
@@ -239,9 +239,9 @@
         and both an A and AAAA for data.example.com when queried for
         www.example.com, they would create the following record:</t>
 
-        <t>www.example.com. EXTRA "images,A; css,A; data,A; data,AAA;"</t>
+        <t>www.example.com. EXTRA "images,A; css,A; data,A; data,AAAA;"</t>
 
-        <t>The entries in the EXRTA list are ordered. An authoritative
+        <t>The entries in the EXTRA list are ordered. An authoritative
         nameserver SHOULD insert the records in the order listed when filling
         the response packet. This is to allow the operator to express a
         preference in case all the records will not fit in the response. The
@@ -277,7 +277,7 @@
 
         <t>Where TXT-DATA is one or more &lt;character-string&gt;s.</t>
 
-        <t>The Extra RR has RR type TBD [RFC Editor: insert the IANA assigned
+        <t>The EXTRA RR has RR type TBD [RFC Editor: insert the IANA assigned
         value and delete this note]</t>
       </section>
     </section>
@@ -352,7 +352,8 @@
     </section>
 
     <section title="Acknowledgements">
-      <t>The authors wish to thank some folk.</t>
+      <t>The authors to thank Mark Andrews, Kazunori Fujiwara, Bob Harold,
+      John Heidemann, Tony Finch.</t>
     </section>
   </middle>
 

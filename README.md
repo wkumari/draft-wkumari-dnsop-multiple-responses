@@ -7,10 +7,10 @@
 dnsop                                                          W. Kumari
 Internet-Draft                                                    Google
 Intended status: Standards Track                                  Z. Yan
-Expires: December 31, 2016                                         CNNIC
+Expires: January 12, 2017                                          CNNIC
                                                              W. Hardaker
                                                            Parsons, Inc.
-                                                           June 29, 2016
+                                                           July 11, 2016
 
 
                Returning extra answers in DNS responses.
@@ -36,7 +36,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on December 31, 2016.
+   This Internet-Draft will expire on January 12, 2017.
 
 Copyright Notice
 
@@ -55,9 +55,9 @@ Copyright Notice
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 1]
+Kumari, et al.          Expires January 12, 2017                [Page 1]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
 Table of Contents
@@ -91,7 +91,7 @@ Table of Contents
    or other client asks for the subsequent queries.  Apart from
    decreasing the latency for end users [RFC6555], this also decreases
    the total number of queries that the recursive resolver needs to send
-   and the autorative server needs to answer.
+   and the authoritative server needs to answer.
 
    For example, the domain name administrator of Example Widgets, Inc
    (example.com) knows that the web page at www.example.com contains
@@ -111,9 +111,9 @@ Table of Contents
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 2]
+Kumari, et al.          Expires January 12, 2017                [Page 2]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
    the MX record), SRV (by providing the target information in addition
@@ -160,16 +160,16 @@ Internet-Draft              DNS Extra Answers                  June 2016
    Additional records  Additional records are records that the
       authoritative nameserver has included in the Additional section.
 
-   EXTRTA Resource Record  The EXTRA resource record (defined below)
+   EXTRA Resource Record  The EXTRA resource record (defined below)
       carries a list fo additional records to send.
 
 
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 3]
+Kumari, et al.          Expires January 12, 2017                [Page 3]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
    Primary query  A Primary query (or primary question) is a QNAME that
@@ -223,9 +223,9 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 4]
+Kumari, et al.          Expires January 12, 2017                [Page 4]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
    queried for directly (e.g for debugging), in which case the record
@@ -233,7 +233,7 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 5.1.  File Format
 
-   The format of the Extra RR is:
+   The format of the EXTRA RR is:
 
    label EXTRA "label,type; label,type; label,type; ..."
 
@@ -242,9 +242,9 @@ Internet-Draft              DNS Extra Answers                  June 2016
    both an A and AAAA for data.example.com when queried for
    www.example.com, they would create the following record:
 
-   www.example.com.  EXTRA "images,A; css,A; data,A; data,AAA;"
+   www.example.com.  EXTRA "images,A; css,A; data,A; data,AAAA;"
 
-   The entries in the EXRTA list are ordered.  An authoritative
+   The entries in the EXTRA list are ordered.  An authoritative
    nameserver SHOULD insert the records in the order listed when filling
    the response packet.  This is to allow the operator to express a
    preference in case all the records will not fit in the response.  The
@@ -273,15 +273,15 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
    Where TXT-DATA is one or more <character-string>s.
 
-   The Extra RR has RR type TBD [RFC Editor: insert the IANA assigned
+   The EXTRA RR has RR type TBD [RFC Editor: insert the IANA assigned
    value and delete this note]
 
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 5]
+Kumari, et al.          Expires January 12, 2017                [Page 5]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
 6.  Signaling support
@@ -335,9 +335,9 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 6]
+Kumari, et al.          Expires January 12, 2017                [Page 6]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
    although there is no easy way to signal this to a client other than
@@ -358,7 +358,8 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 11.  Acknowledgements
 
-   The authors wish to thank some folk.
+   The authors to thank Mark Andrews, Kazunori Fujiwara, Bob Harold,
+   John Heidemann, Tony Finch.
 
 12.  Normative References
 
@@ -390,10 +391,9 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-
-Kumari, et al.          Expires December 31, 2016               [Page 7]
+Kumari, et al.          Expires January 12, 2017                [Page 7]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
    [RFC7873]  Eastlake 3rd, D. and M. Andrews, "Domain Name System (DNS)
@@ -447,9 +447,9 @@ Authors' Addresses
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 8]
+Kumari, et al.          Expires January 12, 2017                [Page 8]
 
-Internet-Draft              DNS Extra Answers                  June 2016
+Internet-Draft              DNS Extra Answers                  July 2016
 
 
    Wes Hardaker
@@ -503,5 +503,5 @@ Internet-Draft              DNS Extra Answers                  June 2016
 
 
 
-Kumari, et al.          Expires December 31, 2016               [Page 9]
+Kumari, et al.          Expires January 12, 2017                [Page 9]
 ```
