@@ -3,7 +3,7 @@
 <!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
 ]>
 <!-- WK: Set category, IPR, docName -->
-<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-04"
+<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-05"
      ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -76,6 +76,24 @@
         </postal>
 
         <email>ietf@hardakers.net</email>
+      </address>
+    </author>
+
+    <author fullname="David C Lawrence" initials="D." surname="Lawrence">
+      <organization>Akamai Technologies </organization>
+
+      <address>
+        <postal>
+          <street>150 Broadway</street>
+
+          <city>Cambridge, MA</city>
+
+          <code>02142-1054</code>
+
+          <country>US</country>
+        </postal>
+
+        <email>tale@akamai.com </email>
       </address>
     </author>
 
@@ -173,7 +191,7 @@
           section.</t>
 
           <t hangText="EXTRA Resource Record">The EXTRA resource record
-          (defined below) carries a list fo additional records to send.</t>
+          (defined below) carries a list of additional records to send.</t>
 
           <t hangText="Primary query">A Primary query (or primary question) is
           a QNAME that the name server operator would like to return
@@ -254,19 +272,18 @@
         TTL of the records added to the Additional section are MUST be the
         same as if queried directly.</t>
 
-        <!-- XXX: needs work: -->
-
         <t>In some cases a zone content administrator might not know what all
         additional records clients need. For example, the owner of
         www.example.com may have outsourced his DNS operations to a third
-        party. DNS administrators may be able to mine their query logs, and
-        see that, in a large majority of cases, a recursive server asks for
-        foo.example.com and then very soon after asks for bar.example.com, and
-        so may decide to optimize this by opportunistically returning bar when
-        queried for foo. This functionality could also be included in the
-        authoritative name server software itself, but discussions of these
-        are outside the scope of this document. <!-- XXX: if they're outside the scope, then this whole
-             paragraph is --></t>
+        party, and / or the DNS operator might not interact with the web
+        development team. DNS server operators may use tools to mine their
+        query logs for records to include. For example, if, in a large
+        majority of cases, a recursive server asks for foo.example.com and
+        then very soon after asks for bar.example.com, it may make sense to
+        optimize this by opportunistically returning bar when queried for foo.
+        This functionality could also be included in the authoritative name
+        server software itself. The exact mechanisms and heuristics used for
+        this are not discussed in this document.</t>
       </section>
 
       <section title="Wire Format">
@@ -291,7 +308,7 @@
     <section anchor="signaling" title="Signaling support">
       <t>Recursive Resolvers (or other DNS clients) that support EXTRA records
       MAY signal this by setting the OPT record's EXTRA bit (bit NN [TBD:
-      assigned by IANA] in the EDNS0 extension header to 1.</t>
+      assigned by IANA] in the EDNS0 extension header to 1).</t>
     </section>
 
     <section title="Stub-Resolver Considerations">
@@ -301,12 +318,12 @@
       authoritative name server. However, stub resolvers may choose to support
       this technique, and / or may query directly for the EXTRA RR if it wants
       to pre-query for data that will likely be needed in the process of
-      supporting its application.</t>
+      supporting applications.</t>
     </section>
 
     <section title="Use of Additional information">
-      <t>When receiving additional records in the additional section, a
-      resolver follows certain rules:</t>
+      <t>When deciding to use additional records in the additional section, a
+      resolver must follow certain rules:</t>
 
       <t><list style="numbers">
           <t>Additional records MUST be validated before being used.</t>
@@ -329,7 +346,7 @@
 
       <t><list style="numbers">
           <t>The EXTRA bit discussed in <xref target="signaling"/> needs to be
-          allocated.</t>
+          allocated. [ Ed: This section to be completed later ] </t>
         </list></t>
     </section>
 
@@ -356,7 +373,8 @@
 
     <section title="Acknowledgements">
       <t>The authors to thank Mark Andrews, John Dickinson, Kazunori Fujiwara,
-      Bob Harold, John Heidemann, Tony Finch.</t>
+      Bob Harold, John Heidemann, and Tony Finch. The authors apologize in
+      advance for others who contributed, but who we managed to forget.</t>
     </section>
   </middle>
 
@@ -398,10 +416,16 @@
     <section title="Changes / Author Notes.">
       <t>[RFC Editor: Please remove this section before publication ]</t>
 
+      <t>From -04 to -05:<list style="symbols">
+          <t>In the deadline rush, Warren forgot to add Tale. Fixed.</t>
+
+          <t>Some more text fixups and clarifications.</t>
+        </list></t>
+
       <t>From -03 to -04:<list style="symbols">
           <t>Some additional text explaining how this differs from solutions
-          which include muiltiple queries (you don't know what to ask until
-          you have received some answers).</t>
+          which include multiple queries (you don't know what to ask until you
+          have received some answers).</t>
         </list></t>
 
       <t>From -02 to -03:<list style="symbols">

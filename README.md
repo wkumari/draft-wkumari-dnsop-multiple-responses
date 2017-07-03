@@ -10,11 +10,13 @@ Intended status: Standards Track                                  Z. Yan
 Expires: January 4, 2018                                           CNNIC
                                                              W. Hardaker
                                                                  USC/ISI
+                                                             D. Lawrence
+                                                     Akamai Technologies
                                                             July 3, 2017
 
 
                Returning extra answers in DNS responses.
-               draft-wkumari-dnsop-multiple-responses-04
+               draft-wkumari-dnsop-multiple-responses-05
 
 Abstract
 
@@ -50,8 +52,6 @@ Copyright Notice
    (http://trustee.ietf.org/license-info) in effect on the date of
    publication of this document.  Please review these documents
    carefully, as they describe your rights and restrictions with respect
-   to this document.  Code Components extracted from this document must
-   include Simplified BSD License text as described in Section 4.e of
 
 
 
@@ -60,6 +60,8 @@ Kumari, et al.           Expires January 4, 2018                [Page 1]
 Internet-Draft              DNS Extra Answers                  July 2017
 
 
+   to this document.  Code Components extracted from this document must
+   include Simplified BSD License text as described in Section 4.e of
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
 
@@ -81,7 +83,7 @@ Table of Contents
    11. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   7
    12. Normative References  . . . . . . . . . . . . . . . . . . . .   7
    Appendix A.  Changes / Author Notes.  . . . . . . . . . . . . . .   8
-   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   8
+   Authors' Addresses  . . . . . . . . . . . . . . . . . . . . . . .   9
 
 1.  Introduction
 
@@ -106,8 +108,6 @@ Table of Contents
    resolve all of these additional names as well.  Providing all of
    these answers in response to a query for www.example.com allows the
    recursive resolver to pre-populate its cache and have these answers
-   available immediately when a stub resolver or other DNS client asks
-   for them.  What is important to notice here is that the stub resolver
 
 
 
@@ -116,6 +116,8 @@ Kumari, et al.           Expires January 4, 2018                [Page 2]
 Internet-Draft              DNS Extra Answers                  July 2017
 
 
+   available immediately when a stub resolver or other DNS client asks
+   for them.  What is important to notice here is that the stub resolver
    does not know what other questions it will need to make until after
    it has already made the request for www.exmaple.com, received the
    reply, made the HTTP connection and parsed the HTML.
@@ -165,8 +167,6 @@ Internet-Draft              DNS Extra Answers                  July 2017
 
 
 
-
-
 Kumari, et al.           Expires January 4, 2018                [Page 3]
 
 Internet-Draft              DNS Extra Answers                  July 2017
@@ -178,7 +178,7 @@ Internet-Draft              DNS Extra Answers                  July 2017
       authoritative nameserver has included in the Additional section.
 
    EXTRA Resource Record  The EXTRA resource record (defined below)
-      carries a list fo additional records to send.
+      carries a list of additional records to send.
 
    Primary query  A Primary query (or primary question) is a QNAME that
       the name server operator would like to return additional answers
@@ -261,20 +261,20 @@ Internet-Draft              DNS Extra Answers                  July 2017
    In some cases a zone content administrator might not know what all
    additional records clients need.  For example, the owner of
    www.example.com may have outsourced his DNS operations to a third
-   party.  DNS administrators may be able to mine their query logs, and
-   see that, in a large majority of cases, a recursive server asks for
-   foo.example.com and then very soon after asks for bar.example.com,
-   and so may decide to optimize this by opportunistically returning bar
-   when queried for foo.  This functionality could also be included in
-   the authoritative name server software itself, but discussions of
-   these are outside the scope of this document.
+   party, and / or the DNS operator might not interact with the web
+   development team.  DNS server operators may use tools to mine their
+   query logs for records to include.  For example, if, in a large
+   majority of cases, a recursive server asks for foo.example.com and
+   then very soon after asks for bar.example.com, it may make sense to
+   optimize this by opportunistically returning bar when queried for
+   foo.  This functionality could also be included in the authoritative
+   name server software itself.  The exact mechanisms and heuristics
+   used for this are not discussed in this document.
 
 5.2.  Wire Format
 
    The wire format of the EXTRA RR is the same as the wire format for a
    TXT RR:
-
-
 
 
 
@@ -297,7 +297,7 @@ Internet-Draft              DNS Extra Answers                  July 2017
 
    Recursive Resolvers (or other DNS clients) that support EXTRA records
    MAY signal this by setting the OPT record's EXTRA bit (bit NN [TBD:
-   assigned by IANA] in the EDNS0 extension header to 1.
+   assigned by IANA] in the EDNS0 extension header to 1).
 
 7.  Stub-Resolver Considerations
 
@@ -307,12 +307,12 @@ Internet-Draft              DNS Extra Answers                  July 2017
    the authoritative name server.  However, stub resolvers may choose to
    support this technique, and / or may query directly for the EXTRA RR
    if it wants to pre-query for data that will likely be needed in the
-   process of supporting its application.
+   process of supporting applications.
 
 8.  Use of Additional information
 
-   When receiving additional records in the additional section, a
-   resolver follows certain rules:
+   When deciding to use additional records in the additional section, a
+   resolver must follow certain rules:
 
    1.  Additional records MUST be validated before being used.
 
@@ -330,8 +330,8 @@ Internet-Draft              DNS Extra Answers                  July 2017
 
    This document contains the following IANA assignment requirements:
 
-   1.  The EXTRA bit discussed in Section 6 needs to be allocated.
-
+   1.  The EXTRA bit discussed in Section 6 needs to be allocated. [ Ed:
+       This section to be completed later ]
 
 
 
@@ -365,7 +365,8 @@ Internet-Draft              DNS Extra Answers                  July 2017
 11.  Acknowledgements
 
    The authors to thank Mark Andrews, John Dickinson, Kazunori Fujiwara,
-   Bob Harold, John Heidemann, Tony Finch.
+   Bob Harold, John Heidemann, and Tony Finch.  The authors apologize in
+   advance for others who contributed, but who we managed to forget.
 
 12.  Normative References
 
@@ -386,7 +387,6 @@ Internet-Draft              DNS Extra Answers                  July 2017
    [RFC2181]  Elz, R. and R. Bush, "Clarifications to the DNS
               Specification", RFC 2181, DOI 10.17487/RFC2181, July 1997,
               <http://www.rfc-editor.org/info/rfc2181>.
-
 
 
 
@@ -412,10 +412,16 @@ Appendix A.  Changes / Author Notes.
 
    [RFC Editor: Please remove this section before publication ]
 
+   From -04 to -05:
+
+   o  In the deadline rush, Warren forgot to add Tale.  Fixed.
+
+   o  Some more text fixups and clarifications.
+
    From -03 to -04:
 
    o  Some additional text explaining how this differs from solutions
-      which include muiltiple queries (you don't know what to ask until
+      which include multiple queries (you don't know what to ask until
       you have received some answers).
 
    From -02 to -03:
@@ -436,12 +442,6 @@ Appendix A.  Changes / Author Notes.
 
    o  Nothing change in the template.
 
-Authors' Addresses
-
-
-
-
-
 
 
 
@@ -451,6 +451,8 @@ Kumari, et al.           Expires January 4, 2018                [Page 8]
 
 Internet-Draft              DNS Extra Answers                  July 2017
 
+
+Authors' Addresses
 
    Warren Kumari
    Google
@@ -479,15 +481,13 @@ Internet-Draft              DNS Extra Answers                  July 2017
    Email: ietf@hardakers.net
 
 
+   David C Lawrence
+   Akamai Technologies
+   150 Broadway
+   Cambridge, MA  02142-1054
+   US
 
-
-
-
-
-
-
-
-
+   Email: tale@akamai.com
 
 
 
