@@ -3,7 +3,7 @@
 <!ENTITY rfc2119 PUBLIC "" ".//reference.RFC.2119.xml">
 ]>
 <!-- WK: Set category, IPR, docName -->
-<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-03"
+<rfc category="std" docName="draft-wkumari-dnsop-multiple-responses-04"
      ipr="trust200902">
   <?xml-stylesheet type='text/xsl' href='rfc2629.xslt' ?>
 
@@ -79,7 +79,7 @@
       </address>
     </author>
 
-    <date day="11" month="July" year="2016"/>
+    <date day="3" month="July" year="2017"/>
 
     <area>template</area>
 
@@ -87,7 +87,9 @@
 
     <abstract>
       <t>This document (re)introduces the ability to provide multiple answers
-      in a DNS response.</t>
+      in a DNS response. This is especially useful as, in many cases, the
+      entity making the request has no a prori knowledge of what other
+      questions it will need to ask.</t>
     </abstract>
   </front>
 
@@ -114,7 +116,11 @@
       of these additional names as well. Providing all of these answers in
       response to a query for www.example.com allows the recursive resolver to
       pre-populate its cache and have these answers available immediately when
-      a stub resolver or other DNS client asks for them.</t>
+      a stub resolver or other DNS client asks for them. What is important to
+      notice here is that the stub resolver does not know what other questions
+      it will need to make until after it has already made the request for
+      www.exmaple.com, received the reply, made the HTTP connection and parsed
+      the HTML. </t>
 
       <t>Other examples where this technique may be useful include SMTP (by
       including mail server addresses, SPF and DKIM records when serving the
@@ -349,8 +355,8 @@
     </section>
 
     <section title="Acknowledgements">
-      <t>The authors to thank Mark Andrews, Kazunori Fujiwara, Bob Harold,
-      John Heidemann, Tony Finch.</t>
+      <t>The authors to thank Mark Andrews, John Dickinson, Kazunori Fujiwara,
+      Bob Harold, John Heidemann, Tony Finch.</t>
     </section>
   </middle>
 
@@ -392,11 +398,13 @@
     <section title="Changes / Author Notes.">
       <t>[RFC Editor: Please remove this section before publication ]</t>
 
-      <t>From -00 to -01.</t>
+      <t>From -03 to -04:<list style="symbols">
+          <t>Some additional text explaining how this differs from solutions
+          which include muiltiple queries (you don't know what to ask until
+          you have received some answers).</t>
+        </list></t>
 
-      <t><list style="symbols">
-          <t>Nothing changed in the template!</t>
-        </list>From -02 to -3:<list>
+      <t>From -02 to -03:<list style="symbols">
           <t>Sat down and rewrote and cleaned up large sections of text.</t>
 
           <t>Changed name of RR from Additional to EXTRA (the term
@@ -408,6 +416,10 @@
           <t>Attempted to clarify that the individual RRs are added to the
           response, not the EXTRA record itself. The EXTRA RR can be queried
           directly.</t>
+        </list></t>
+
+      <t>From -00 to -01:<list style="symbols">
+          <t>Nothing change in the template.</t>
         </list></t>
     </section>
   </back>

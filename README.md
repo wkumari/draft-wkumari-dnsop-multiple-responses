@@ -7,19 +7,21 @@
 dnsop                                                          W. Kumari
 Internet-Draft                                                    Google
 Intended status: Standards Track                                  Z. Yan
-Expires: January 12, 2017                                          CNNIC
+Expires: January 4, 2018                                           CNNIC
                                                              W. Hardaker
-                                                           Parsons, Inc.
-                                                           July 11, 2016
+                                                                 USC/ISI
+                                                            July 3, 2017
 
 
                Returning extra answers in DNS responses.
-               draft-wkumari-dnsop-multiple-responses-03
+               draft-wkumari-dnsop-multiple-responses-04
 
 Abstract
 
    This document (re)introduces the ability to provide multiple answers
-   in a DNS response.
+   in a DNS response.  This is especially useful as, in many cases, the
+   entity making the request has no a prori knowledge of what other
+   questions it will need to ask.
 
 Status of This Memo
 
@@ -36,11 +38,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on January 12, 2017.
+   This Internet-Draft will expire on January 4, 2018.
 
 Copyright Notice
 
-   Copyright (c) 2016 IETF Trust and the persons identified as the
+   Copyright (c) 2017 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -50,31 +52,32 @@ Copyright Notice
    carefully, as they describe your rights and restrictions with respect
    to this document.  Code Components extracted from this document must
    include Simplified BSD License text as described in Section 4.e of
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 1]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
+
    the Trust Legal Provisions and are provided without warranty as
    described in the Simplified BSD License.
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 1]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
 
 Table of Contents
 
    1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
      1.1.  Requirements notation . . . . . . . . . . . . . . . . . .   3
    2.  Background  . . . . . . . . . . . . . . . . . . . . . . . . .   3
-   3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   3.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   4
    4.  Returning multiple answers  . . . . . . . . . . . . . . . . .   4
-   5.  The EXTRA Resource Record . . . . . . . . . . . . . . . . . .   4
+   5.  The EXTRA Resource Record . . . . . . . . . . . . . . . . . .   5
      5.1.  File Format . . . . . . . . . . . . . . . . . . . . . . .   5
      5.2.  Wire Format . . . . . . . . . . . . . . . . . . . . . . .   5
    6.  Signaling support . . . . . . . . . . . . . . . . . . . . . .   6
    7.  Stub-Resolver Considerations  . . . . . . . . . . . . . . . .   6
    8.  Use of Additional information . . . . . . . . . . . . . . . .   6
    9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   6
-   10. Security Considerations . . . . . . . . . . . . . . . . . . .   6
+   10. Security Considerations . . . . . . . . . . . . . . . . . . .   7
    11. Acknowledgements  . . . . . . . . . . . . . . . . . . . . . .   7
    12. Normative References  . . . . . . . . . . . . . . . . . . . .   7
    Appendix A.  Changes / Author Notes.  . . . . . . . . . . . . . .   8
@@ -104,18 +107,21 @@ Table of Contents
    these answers in response to a query for www.example.com allows the
    recursive resolver to pre-populate its cache and have these answers
    available immediately when a stub resolver or other DNS client asks
-   for them.
+   for them.  What is important to notice here is that the stub resolver
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 2]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
+
+   does not know what other questions it will need to make until after
+   it has already made the request for www.exmaple.com, received the
+   reply, made the HTTP connection and parsed the HTML.
 
    Other examples where this technique may be useful include SMTP (by
    including mail server addresses, SPF and DKIM records when serving
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 2]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
-
    the MX record), SRV (by providing the target information in addition
    to the SRV response) and TLSA (by providing any TLSA records
    associated with a name).  This same technique can also be used to
@@ -155,6 +161,17 @@ Internet-Draft              DNS Extra Answers                  July 2016
    resolver can validate, authenticate and trust the records in the
    additional information.
 
+
+
+
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 3]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
+
 3.  Terminology
 
    Additional records  Additional records are records that the
@@ -162,15 +179,6 @@ Internet-Draft              DNS Extra Answers                  July 2016
 
    EXTRA Resource Record  The EXTRA resource record (defined below)
       carries a list fo additional records to send.
-
-
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 3]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
 
    Primary query  A Primary query (or primary question) is a QNAME that
       the name server operator would like to return additional answers
@@ -212,6 +220,14 @@ Internet-Draft              DNS Extra Answers                  July 2016
    4.  Zone administrators SHOULD only include records identified in the
        EXTRA Resource Records that they expect a client to need.
 
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 4]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
+
 5.  The EXTRA Resource Record
 
    To allow a zone content administrator to instruct the name server
@@ -219,15 +235,6 @@ Internet-Draft              DNS Extra Answers                  July 2016
    label, we introduce the EXTRA Resource Record (RR).  These additional
    records are appended to the additional section (note that the EXTRA
    RR itself is not appended).  The EXTRA resource record MAY still be
-
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 4]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
-
    queried for directly (e.g for debugging), in which case the record
    itself is returned.
 
@@ -267,6 +274,16 @@ Internet-Draft              DNS Extra Answers                  July 2016
    The wire format of the EXTRA RR is the same as the wire format for a
    TXT RR:
 
+
+
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 5]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
+
        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
        /                   TXT-DATA                    /
        +--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+
@@ -275,14 +292,6 @@ Internet-Draft              DNS Extra Answers                  July 2016
 
    The EXTRA RR has RR type TBD [RFC Editor: insert the IANA assigned
    value and delete this note]
-
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 5]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
 
 6.  Signaling support
 
@@ -323,6 +332,14 @@ Internet-Draft              DNS Extra Answers                  July 2016
 
    1.  The EXTRA bit discussed in Section 6 needs to be allocated.
 
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 6]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
+
 10.  Security Considerations
 
    Additional records will make DNS responses even larger than they are
@@ -331,14 +348,6 @@ Internet-Draft              DNS Extra Answers                  July 2016
    responses to EXTRA requests over TCP or when using Cookies [RFC5395],
    although there is no easy way to signal this to a client other than
    through the use of the truncate bit.
-
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 6]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
 
    A malicious authoritative server could include a large number of
    extra records (and associated DNSSEC information) and attempt to DoS
@@ -355,8 +364,8 @@ Internet-Draft              DNS Extra Answers                  July 2016
 
 11.  Acknowledgements
 
-   The authors to thank Mark Andrews, Kazunori Fujiwara, Bob Harold,
-   John Heidemann, Tony Finch.
+   The authors to thank Mark Andrews, John Dickinson, Kazunori Fujiwara,
+   Bob Harold, John Heidemann, Tony Finch.
 
 12.  Normative References
 
@@ -378,6 +387,15 @@ Internet-Draft              DNS Extra Answers                  July 2016
               Specification", RFC 2181, DOI 10.17487/RFC2181, July 1997,
               <http://www.rfc-editor.org/info/rfc2181>.
 
+
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 7]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
+
    [RFC5395]  Eastlake 3rd, D., "Domain Name System (DNS) IANA
               Considerations", RFC 5395, DOI 10.17487/RFC5395, November
               2008, <http://www.rfc-editor.org/info/rfc5395>.
@@ -385,16 +403,6 @@ Internet-Draft              DNS Extra Answers                  July 2016
    [RFC6555]  Wing, D. and A. Yourtchenko, "Happy Eyeballs: Success with
               Dual-Stack Hosts", RFC 6555, DOI 10.17487/RFC6555, April
               2012, <http://www.rfc-editor.org/info/rfc6555>.
-
-
-
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 7]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
 
    [RFC7873]  Eastlake 3rd, D. and M. Andrews, "Domain Name System (DNS)
               Cookies", RFC 7873, DOI 10.17487/RFC7873, May 2016,
@@ -404,25 +412,45 @@ Appendix A.  Changes / Author Notes.
 
    [RFC Editor: Please remove this section before publication ]
 
-   From -00 to -01.
+   From -03 to -04:
 
-   o  Nothing changed in the template!
+   o  Some additional text explaining how this differs from solutions
+      which include muiltiple queries (you don't know what to ask until
+      you have received some answers).
 
-   From -02 to -3:
+   From -02 to -03:
 
-      Sat down and rewrote and cleaned up large sections of text.
+   o  Sat down and rewrote and cleaned up large sections of text.
 
-      Changed name of RR from Additional to EXTRA (the term "Additional"
+   o  Changed name of RR from Additional to EXTRA (the term "Additional"
       is overloaded in general)
 
-      Clarified that stub resolvers and other clients MAY use this
+   o  Clarified that stub resolvers and other clients MAY use this
       specification.
 
-      Attempted to clarify that the individual RRs are added to the
+   o  Attempted to clarify that the individual RRs are added to the
       response, not the EXTRA record itself.  The EXTRA RR can be
       queried directly.
 
+   From -00 to -01:
+
+   o  Nothing change in the template.
+
 Authors' Addresses
+
+
+
+
+
+
+
+
+
+
+Kumari, et al.           Expires January 4, 2018                [Page 8]
+
+Internet-Draft              DNS Extra Answers                  July 2017
+
 
    Warren Kumari
    Google
@@ -442,18 +470,8 @@ Authors' Addresses
    Email: yanzhiwei@cnnic.cn
 
 
-
-
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 8]
-
-Internet-Draft              DNS Extra Answers                  July 2016
-
-
    Wes Hardaker
-   Parsons, Inc.
+   USC/ISI
    P.O. Box 382
    Davis, CA  95617
    US
@@ -485,23 +503,5 @@ Internet-Draft              DNS Extra Answers                  July 2016
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Kumari, et al.          Expires January 12, 2017                [Page 9]
+Kumari, et al.           Expires January 4, 2018                [Page 9]
 ```
