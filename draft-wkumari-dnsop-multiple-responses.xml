@@ -79,6 +79,24 @@
       </address>
     </author>
 
+    <author fullname="David C Lawrence" initials="D." surname="Lawrence">
+      <organization>Akamai Technologies</organization>
+
+      <address>
+        <postal>
+          <street>150 Broadway</street>
+
+          <city>Cambridge, MA</city>
+
+          <code>02142-1054</code>
+
+          <country>US</country>
+        </postal>
+
+        <email>tale@akamai.com</email>
+      </address>
+    </author>
+
     <date day="3" month="July" year="2017"/>
 
     <area>template</area>
